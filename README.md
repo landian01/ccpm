@@ -2,14 +2,14 @@
 
 [![Automaze](https://img.shields.io/badge/By-automaze.io-4b3baf)](https://automaze.io)
 &nbsp;
-[![Claude Code](https://img.shields.io/badge/+-Claude%20Code-d97757)](https://github.com/automazeio/ccpm/blob/main/README.md)
-[![GitHub Issues](https://img.shields.io/badge/+-GitHub%20Issues-1f2328)](https://github.com/automazeio/ccpm)
+[![Claude Code](https://img.shields.io/badge/+-Claude%20Code-d97757)](https://github.com/landian01/ccpm/blob/main/README.md)
+[![GitHub Issues](https://img.shields.io/badge/+-GitHub%20Issues-1f2328)](https://github.com/landian01/ccpm)
 &nbsp;
-[![MIT License](https://img.shields.io/badge/License-MIT-28a745)](https://github.com/automazeio/ccpm/blob/main/LICENSE)
+[![MIT License](https://img.shields.io/badge/License-MIT-28a745)](https://github.com/landian01/ccpm/blob/main/LICENSE)
 &nbsp;
 [![Follow on 𝕏](https://img.shields.io/badge/𝕏-@aroussi-1c9bf0)](http://x.com/intent/follow?screen_name=aroussi)
 &nbsp;
-[![Star this repo](https://img.shields.io/badge/★-Star%20this%20repo-e7b10b)](https://github.com/automazeio/ccpm)
+[![Star this repo](https://img.shields.io/badge/★-Star%20this%20repo-e7b10b)](https://github.com/landian01/ccpm)
 
 ### Claude Code 工作流，使用规范驱动开发、GitHub Issues、Git 工作树和多个并行运行的 AI 代理来交付 ~~更快~~ _更好_ 的软件。
 
@@ -399,7 +399,7 @@ GitHub 不需要知道工作是如何完成的——只知道它**已完成**。
    ```
    > ⚠️ **重要**：如果您已经有 `.claude` 目录，请将此仓库克隆到不同目录，并将克隆的 `.claude` 目录内容复制到项目的 `.claude` 目录。
 
-   查看 [安装指南 ›](https://github.com/automazeio/ccpm/tree/main/install) 中的完整/其他安装选项
+   查看 [安装指南 ›](https://github.com/landian01/ccpm/tree/main/install) 中的完整/其他安装选项
 
 
 2. **初始化 PM 系统**：
@@ -473,7 +473,7 @@ Claude Code PM 在 [Automaze](https://automaze.io) 开发，**为交付的开发
 
 如果 Claude Code PM 帮助您的团队更好地交付软件：
 
-- ⭐ **[Star this repository](https://github.com/automazeio/ccpm)** 以表示您的支持
+- ⭐ **[Star this repository](https://github.com/landian01/ccpm)** 以表示您的支持
 - 🐦 **[在 X 上关注 @aroussi](https://x.com/aroussi)** 获取更新和提示
 
 
@@ -488,4 +488,4 @@ Claude Code PM 在 [Automaze](https://automaze.io) 开发，**为交付的开发
 
 ## Star History
 
-![Star History Chart](https://api.star-history.com/svg?repos=automazeio/ccpm)
+![Star History Chart](https://api.star-history.com/svg?repos=landian01/ccpm)

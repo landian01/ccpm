@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "mcp__serena__read_file",
+      "mcp__serena__list_dir",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
