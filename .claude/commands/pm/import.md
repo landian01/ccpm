@@ -2,19 +2,19 @@
 allowed-tools: Bash, Read, Write, LS
 ---
 
-# Import
+# 导入
 
-Import existing GitHub issues into the PM system.
+将现有的 GitHub issues 导入到 PM 系统中。
 
-## Usage
+## 用法
 ```
 /pm:import [--epic <epic_name>] [--label <label>]
 ```
 
-Options:
-- `--epic` - Import into specific epic
-- `--label` - Import only issues with specific label
-- No args - Import all untracked issues
+选项：
+- `--epic` - 导入到特定史诗
+- `--label` - 只导入具有特定标签的 issues
+- 无参数 - 导入所有未跟踪的 issues
 
 ## Instructions
 

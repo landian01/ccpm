@@ -2,101 +2,101 @@
 allowed-tools: Bash, Read, Write, LS
 ---
 
-# Clean
+# 清理
 
-Clean up completed work and archive old epics.
+清理已完成的工作并归档旧的史诗。
 
-## Usage
+## 用法
 ```
 /pm:clean [--dry-run]
 ```
 
-Options:
-- `--dry-run` - Show what would be cleaned without doing it
+选项：
+- `--dry-run` - 显示将要清理的内容而不实际执行
 
-## Instructions
+## 指令
 
-### 1. Identify Completed Epics
+### 1. 识别已完成的史诗
 
-Find epics with:
-- `status: completed` in frontmatter
-- All tasks closed
-- Last update > 30 days ago
+查找具有以下特征的史诗：
+- 前置元数据中 `status: completed`
+- 所有任务已关闭
+- 最后更新 > 30 天前
 
-### 2. Identify Stale Work
+### 2. 识别过时的作品
 
-Find:
-- Progress files for closed issues
-- Update directories for completed work
-- Orphaned task files (epic deleted)
-- Empty directories
+查找：
+- 已关闭问题的进度文件
+- 已完成工作的更新目录
+- 孤立的任务文件（史诗已删除）
+- 空目录
 
-### 3. Show Cleanup Plan
+### 3. 显示清理计划
 
 ```
-🧹 Cleanup Plan
+🧹 清理计划
 
-Completed Epics to Archive:
-  {epic_name} - Completed {days} days ago
-  {epic_name} - Completed {days} days ago
-  
-Stale Progress to Remove:
-  {count} progress files for closed issues
-  
-Empty Directories:
-  {list_of_empty_dirs}
-  
-Space to Recover: ~{size}KB
+要归档的已完成史诗：
+  {epic_name} - {days} 天前完成
+  {epic_name} - {days} 天前完成
 
-{If --dry-run}: This is a dry run. No changes made.
-{Otherwise}: Proceed with cleanup? (yes/no)
+要删除的过时进度：
+  已关闭问题的 {count} 个进度文件
+
+空目录：
+  {empty_dirs_list}
+
+可回收空间：~{size}KB
+
+{如果是 --dry-run}：这是试运行。没有进行任何更改。
+{否则}：继续清理？（yes/no）
 ```
 
-### 4. Execute Cleanup
+### 4. 执行清理
 
-If user confirms:
+如果用户确认：
 
-**Archive Epics:**
+**归档史诗：**
 ```bash
 mkdir -p .claude/epics/.archived
 mv .claude/epics/{completed_epic} .claude/epics/.archived/
 ```
 
-**Remove Stale Files:**
-- Delete progress files for closed issues > 30 days
-- Remove empty update directories
-- Clean up orphaned files
+**删除过时文件：**
+- 删除已关闭问题 > 30 天的进度文件
+- 删除空的更新目录
+- 清理孤立文件
 
-**Create Archive Log:**
-Create `.claude/epics/.archived/archive-log.md`:
+**创建归档日志：**
+创建 `.claude/epics/.archived/archive-log.md`：
 ```markdown
-# Archive Log
+# 归档日志
 
 ## {current_date}
-- Archived: {epic_name} (completed {date})
-- Removed: {count} stale progress files
-- Cleaned: {count} empty directories
+- 已归档：{epic_name}（{date} 完成）
+- 已删除：{count} 个过时进度文件
+- 已清理：{count} 个空目录
 ```
 
-### 5. Output
+### 5. 输出
 
 ```
-✅ Cleanup Complete
+✅ 清理完成
 
-Archived:
-  {count} completed epics
-  
-Removed:
-  {count} stale files
-  {count} empty directories
-  
-Space recovered: {size}KB
+已归档：
+  {count} 个已完成史诗
 
-System is clean and organized.
+已删除：
+  {count} 个过时文件
+  {count} 个空目录
+
+回收空间：{size}KB
+
+系统干净且井井有条。
 ```
 
-## Important Notes
+## 重要说明
 
-Always offer --dry-run to preview changes.
-Never delete PRDs or incomplete work.
-Keep archive log for history.
+始终提供 --dry-run 来预览更改。
+永远不要删除 PRD 或未完成的工作。
+保留归档日志作为历史记录。

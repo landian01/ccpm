@@ -2,107 +2,107 @@
 allowed-tools: Bash, Read, Write, LS, Task
 ---
 
-# Run Tests
+# 运行测试
 
-Execute tests with the configured test-runner agent.
+使用配置的测试运行器代理执行测试。
 
-## Usage
+## 用法
 ```
 /testing:run [test_target]
 ```
 
-Where `test_target` can be:
-- Empty (run all tests)
-- Test file path
-- Test pattern
-- Test suite name
+其中 `test_target` 可以是：
+- 空（运行所有测试）
+- 测试文件路径
+- 测试模式
+- 测试套件名称
 
-## Quick Check
+## 快速检查
 
 ```bash
-# Check if testing is configured
-test -f .claude/testing-config.md || echo "❌ Testing not configured. Run /testing:prime first"
+# 检查测试是否已配置
+test -f .claude/testing-config.md || echo "❌ 测试未配置。先运行 /testing:prime"
 ```
 
-If test target provided, verify it exists:
+如果提供了测试目标，验证它是否存在：
 ```bash
-# For file targets
-test -f "$ARGUMENTS" || echo "⚠️ Test file not found: $ARGUMENTS"
+# 对于文件目标
+test -f "$ARGUMENTS" || echo "⚠️ 测试文件未找到：$ARGUMENTS"
 ```
 
-## Instructions
+## 指令
 
-### 1. Determine Test Command
+### 1. 确定测试命令
 
-Based on testing-config.md and target:
-- No arguments → Run full test suite from config
-- File path → Run specific test file
-- Pattern → Run tests matching pattern
+基于 testing-config.md 和目标：
+- 无参数 → 从配置运行完整测试套件
+- 文件路径 → 运行特定的测试文件
+- 模式 → 运行匹配模式的测试
 
-### 2. Execute Tests
+### 2. 执行测试
 
-Use the test-runner agent from `.claude/agents/test-runner.md`:
+使用 `.claude/agents/test-runner.md` 中的测试运行器代理：
 
 ```markdown
-Execute tests for: $ARGUMENTS (or "all" if empty)
+为以下内容执行测试：$ARGUMENTS（如果为空则为 "all"）
 
-Requirements:
-- Run with verbose output for debugging
-- No mocks - use real services
-- Capture full output including stack traces
-- If test fails, check test structure before assuming code issue
+要求：
+- 使用详细输出进行调试
+- 无模拟 - 使用真实服务
+- 捕获完整输出包括堆栈跟踪
+- 如果测试失败，在假设代码问题前检查测试结构
 ```
 
-### 3. Monitor Execution
+### 3. 监控执行
 
-- Show test progress
-- Capture stdout and stderr
-- Note execution time
+- 显示测试进度
+- 捕获 stdout 和 stderr
+- 记录执行时间
 
-### 4. Report Results
+### 4. 报告结果
 
-**Success:**
+**成功：**
 ```
-✅ All tests passed ({count} tests in {time}s)
+✅ 所有测试通过（{count} 个测试，耗时 {time}秒）
 ```
 
-**Failure:**
+**失败：**
 ```
-❌ Test failures: {failed_count} of {total_count}
+❌ 测试失败：{failed_count}/{total_count}
 
 {test_name} - {file}:{line}
-  Error: {error_message}
-  Likely: {test issue | code issue}
-  Fix: {suggestion}
+  错误：{error_message}
+  可能原因：{test issue | code issue}
+  修复建议：{suggestion}
 
-Run with more detail: /testing:run {specific_test}
+运行更多详情：/testing:run {specific_test}
 ```
 
-**Mixed:**
+**混合结果：**
 ```
-Tests complete: {passed} passed, {failed} failed, {skipped} skipped
+测试完成：{passed} 通过，{failed} 失败，{skipped} 跳过
 
-Failed:
-- {test_1}: {brief_reason}
-- {test_2}: {brief_reason}
+失败：
+- {test_1}：{brief_reason}
+- {test_2}：{brief_reason}
 ```
 
-### 5. Cleanup
+### 5. 清理
 
 ```bash
-# Kill any hanging test processes
+# 杀死任何挂起的测试进程
 pkill -f "jest|mocha|pytest" 2>/dev/null || true
 ```
 
-## Error Handling
+## 错误处理
 
-- Test command fails → "❌ Test execution failed: {error}. Check test framework is installed."
-- Timeout → Kill process and report: "❌ Tests timed out after {time}s"
-- No tests found → "❌ No tests found matching: $ARGUMENTS"
+- 测试命令失败 → "❌ 测试执行失败：{error}。检查测试框架是否已安装。"
+- 超时 → 杀死进程并报告："❌ 测试在 {time}秒后超时"
+- 未找到测试 → "❌ 未找到匹配的测试：$ARGUMENTS"
 
-## Important Notes
+## 重要说明
 
-- Always use test-runner agent for analysis
-- No mocking - real services only
-- Check test structure if failures occur
-- Keep output focused on failures
+- 始终使用测试运行器代理进行分析
+- 无模拟 - 仅使用真实服务
+- 如果发生失败，检查测试结构
+- 保持输出专注于失败

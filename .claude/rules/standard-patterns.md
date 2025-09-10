@@ -1,174 +1,174 @@
-# Standard Patterns for Commands
+# 命令的标准模式
 
-This file defines common patterns that all commands should follow to maintain consistency and simplicity.
+此文件定义了所有命令应遵循的常见模式，以保持一致性和简洁性。
 
-## Core Principles
+## 核心原则
 
-1. **Fail Fast** - Check critical prerequisites, then proceed
-2. **Trust the System** - Don't over-validate things that rarely fail
-3. **Clear Errors** - When something fails, say exactly what and how to fix it
-4. **Minimal Output** - Show what matters, skip decoration
+1. **快速失败** - 检查关键先决条件，然后继续
+2. **信任系统** - 不要过度验证很少失败的事情
+3. **清晰的错误** - 当某些事情失败时，准确说明失败的原因和修复方法
+4. **最小输出** - 显示重要的内容，跳过装饰
 
-## Standard Validations
+## 标准验证
 
-### Minimal Preflight
-Only check what's absolutely necessary:
+### 最少预检
+只检查绝对必要的内容：
 ```markdown
-## Quick Check
-1. If command needs specific directory/file:
-   - Check it exists: `test -f {file} || echo "❌ {file} not found"`
-   - If missing, tell user exact command to fix it
-2. If command needs GitHub:
-   - Assume `gh` is authenticated (it usually is)
-   - Only check on actual failure
+## 快速检查
+1. 如果命令需要特定的目录/文件：
+   - 检查它是否存在：`test -f {file} || echo "❌ {file} 未找到"`
+   - 如果缺失，告诉用户确切的修复命令
+2. 如果命令需要 GitHub：
+   - 假设 `gh` 已身份验证（通常确实如此）
+   - 只在实际失败时检查
 ```
 
-### DateTime Handling
+### 日期时间处理
 ```markdown
-Get current datetime: `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+获取当前日期时间：`date -u +"%Y-%m-%dT%H:%M:%SZ"`
 ```
-Don't repeat full instructions - just reference `/rules/datetime.md` once.
+不要重复完整说明 - 只需引用一次 `/rules/datetime.md`。
 
-### Error Messages
-Keep them short and actionable:
+### 错误消息
+保持简短和可操作：
 ```markdown
-❌ {What failed}: {Exact solution}
-Example: "❌ Epic not found: Run /pm:prd-parse feature-name"
-```
-
-## Standard Output Formats
-
-### Success Output
-```markdown
-✅ {Action} complete
-  - {Key result 1}
-  - {Key result 2}
-Next: {Single suggested action}
+❌ {失败内容}: {确切的解决方案}
+示例："❌ 史诗未找到：运行 /pm:prd-parse feature-name"
 ```
 
-### List Output
+## 标准输出格式
+
+### 成功输出
 ```markdown
-{Count} {items} found:
-- {item 1}: {key detail}
-- {item 2}: {key detail}
+✅ {操作} 完成
+  - {关键结果 1}
+  - {关键结果 2}
+下一步：{单个建议操作}
 ```
 
-### Progress Output
+### 列表输出
 ```markdown
-{Action}... {current}/{total}
+找到 {数量} 个{项目}：
+- {项目 1}: {关键细节}
+- {项目 2}: {关键细节}
 ```
 
-## File Operations
-
-### Check and Create
+### 进度输出
 ```markdown
-# Don't ask permission, just create what's needed
+{操作}... {当前}/{总数}
+```
+
+## 文件操作
+
+### 检查和创建
+```markdown
+# 不要请求权限，只需创建需要的内容
 mkdir -p .claude/{directory} 2>/dev/null
 ```
 
-### Read with Fallback
+### 带回退的读取
 ```markdown
-# Try to read, continue if missing
+# 尝试读取，如果缺失则继续
 if [ -f {file} ]; then
-  # Read and use file
+  # 读取并使用文件
 else
-  # Use sensible default
+  # 使用合理的默认值
 fi
 ```
 
-## GitHub Operations
+## GitHub 操作
 
-### Trust gh CLI
+### 信任 gh CLI
 ```markdown
-# Don't pre-check auth, just try the operation
-gh {command} || echo "❌ GitHub CLI failed. Run: gh auth login"
+# 不要预先检查身份验证，只需尝试操作
+gh {command} || echo "❌ GitHub CLI 失败。运行：gh auth login"
 ```
 
-### Simple Issue Operations
+### 简单问题操作
 ```markdown
-# Get what you need in one call
+# 在一次调用中获取您需要的内容
 gh issue view {number} --json state,title,body
 ```
 
-## Common Patterns to Avoid
+## 要避免的常见模式
 
-### DON'T: Over-validate
+### 不要：过度验证
 ```markdown
-# Bad - too many checks
-1. Check directory exists
-2. Check permissions
-3. Check git status
-4. Check GitHub auth
-5. Check rate limits
-6. Validate every field
+# 坏 - 太多检查
+1. 检查目录存在
+2. 检查权限
+3. 检查 git 状态
+4. 检查 GitHub 身份验证
+5. 检查速率限制
+6. 验证每个字段
 ```
 
-### DO: Check essentials
+### 要：检查 essentials
 ```markdown
-# Good - just what's needed
-1. Check target exists
-2. Try the operation
-3. Handle failure clearly
+# 好 - 只需要的内容
+1. 检查目标存在
+2. 尝试操作
+3. 清晰地处理失败
 ```
 
-### DON'T: Verbose output
+### 不要：冗长输出
 ```markdown
-# Bad - too much information
-🎯 Starting operation...
-📋 Validating prerequisites...
-✅ Step 1 complete
-✅ Step 2 complete
-📊 Statistics: ...
-💡 Tips: ...
+# 坏 - 太多信息
+🎯 开始操作...
+📋 验证先决条件...
+✅ 步骤 1 完成
+✅ 步骤 2 完成
+📊 统计信息：...
+💡 提示：...
 ```
 
-### DO: Concise output
+### 要：简洁输出
 ```markdown
-# Good - just results
-✅ Done: 3 files created
-Failed: auth.test.js (syntax error - line 42)
+# 好 - 只是结果
+✅ 完成：创建了 3 个文件
+失败：auth.test.js（语法错误 - 第 42 行）
 ```
 
-### DON'T: Ask too many questions
+### 不要：问太多问题
 ```markdown
-# Bad - too interactive
-"Continue? (yes/no)"
-"Overwrite? (yes/no)"
-"Are you sure? (yes/no)"
+# 坏 - 太多交互
+"继续吗？（是/否）"
+"覆盖吗？（是/否）"
+"您确定吗？（是/否）"
 ```
 
-### DO: Smart defaults
+### 要：智能默认值
 ```markdown
-# Good - proceed with sensible defaults
-# Only ask when destructive or ambiguous
-"This will delete 10 files. Continue? (yes/no)"
+# 好 - 使用合理的默认值继续
+# 只在破坏性或模糊时询问
+"这将删除 10 个文件。继续吗？（是/否）"
 ```
 
-## Quick Reference
+## 快速参考
 
-### Essential Tools Only
-- Read/List operations: `Read, LS`
-- File creation: `Read, Write, LS`
-- GitHub operations: Add `Bash`
-- Complex analysis: Add `Task` (sparingly)
+### 仅必需工具
+- 读取/列表操作：`Read, LS`
+- 文件创建：`Read, Write, LS`
+- GitHub 操作：添加 `Bash`
+- 复杂分析：添加 `Task`（少量使用）
 
-### Status Indicators
-- ✅ Success (use sparingly)
-- ❌ Error (always with solution)
-- ⚠️ Warning (only if action needed)
-- No emoji for normal output
+### 状态指示器
+- ✅ 成功（少量使用）
+- ❌ 错误（始终带有解决方案）
+- ⚠️ 警告（仅在需要操作时）
+- 正常输出不使用表情符号
 
-### Exit Strategies
-- Success: Brief confirmation
-- Failure: Clear error + exact fix
-- Partial: Show what worked, what didn't
+### 退出策略
+- 成功：简短确认
+- 失败：清晰的错误 + 确切的修复
+- 部分：显示什么有效，什么无效
 
-## Remember
+## 记住
 
-**Simple is not simplistic** - We still handle errors properly, we just don't try to prevent every possible edge case. We trust that:
-- The file system usually works
-- GitHub CLI is usually authenticated  
-- Git repositories are usually valid
-- Users know what they're doing
+**简单不是简化** - 我们仍然正确处理错误，只是不试图防止每个可能的边缘情况。我们相信：
+- 文件系统通常正常工作
+- GitHub CLI 通常已身份验证
+- Git 仓库通常有效
+- 用户知道他们在做什么
 
-Focus on the happy path, fail gracefully when things go wrong.
+专注于快乐路径，在事情出错时优雅地失败。

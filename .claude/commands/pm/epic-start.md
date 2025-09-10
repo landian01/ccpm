@@ -2,133 +2,133 @@
 allowed-tools: Bash, Read, Write, LS, Task
 ---
 
-# Epic Start
+# 史诗开始
 
-Launch parallel agents to work on epic tasks in a shared branch.
+在共享分支中启动并行代理处理史诗任务。
 
-## Usage
+## 用法
 ```
 /pm:epic-start <epic_name>
 ```
 
-## Quick Check
+## 快速检查
 
-1. **Verify epic exists:**
+1. **验证史诗是否存在：**
    ```bash
-   test -f .claude/epics/$ARGUMENTS/epic.md || echo "❌ Epic not found. Run: /pm:prd-parse $ARGUMENTS"
+   test -f .claude/epics/$ARGUMENTS/epic.md || echo "❌ 未找到史诗。先运行：/pm:prd-parse $ARGUMENTS"
    ```
 
-2. **Check GitHub sync:**
-   Look for `github:` field in epic frontmatter.
-   If missing: "❌ Epic not synced. Run: /pm:epic-sync $ARGUMENTS first"
+2. **检查 GitHub 同步：**
+   在史诗前置元数据中查找 `github:` 字段。
+   如果缺失："❌ 史诗未同步。先运行：/pm:epic-sync $ARGUMENTS"
 
-3. **Check for branch:**
+3. **检查分支：**
    ```bash
    git branch -a | grep "epic/$ARGUMENTS"
    ```
 
-4. **Check for uncommitted changes:**
+4. **检查未提交的更改：**
    ```bash
    git status --porcelain
    ```
-   If output is not empty: "❌ You have uncommitted changes. Please commit or stash them before starting an epic"
+   如果输出不为空："❌ 您有未提交的更改。请在开始史诗前提交或暂存它们"
 
-## Instructions
+## 指令
 
-### 1. Create or Enter Branch
+### 1. 创建或进入分支
 
-Follow `/rules/branch-operations.md`:
+遵循 `/rules/branch-operations.md`：
 
 ```bash
-# Check for uncommitted changes
+# 检查未提交的更改
 if [ -n "$(git status --porcelain)" ]; then
-  echo "❌ You have uncommitted changes. Please commit or stash them before starting an epic."
+  echo "❌ 您有未提交的更改。请在开始史诗前提交或暂存它们。"
   exit 1
 fi
 
-# If branch doesn't exist, create it
+# 如果分支不存在，创建它
 if ! git branch -a | grep -q "epic/$ARGUMENTS"; then
   git checkout main
   git pull origin main
   git checkout -b epic/$ARGUMENTS
   git push -u origin epic/$ARGUMENTS
-  echo "✅ Created branch: epic/$ARGUMENTS"
+  echo "✅ 已创建分支：epic/$ARGUMENTS"
 else
   git checkout epic/$ARGUMENTS
   git pull origin epic/$ARGUMENTS
-  echo "✅ Using existing branch: epic/$ARGUMENTS"
+  echo "✅ 使用现有分支：epic/$ARGUMENTS"
 fi
 ```
 
-### 2. Identify Ready Issues
+### 2. 识别就绪的问题
 
-Read all task files in `.claude/epics/$ARGUMENTS/`:
-- Parse frontmatter for `status`, `depends_on`, `parallel` fields
-- Check GitHub issue status if needed
-- Build dependency graph
+读取 `.claude/epics/$ARGUMENTS/` 中的所有任务文件：
+- 解析前置元数据中的 `status`、`depends_on`、`parallel` 字段
+- 如果需要检查 GitHub 问题状态
+- 构建依赖关系图
 
-Categorize issues:
-- **Ready**: No unmet dependencies, not started
-- **Blocked**: Has unmet dependencies
-- **In Progress**: Already being worked on
-- **Complete**: Finished
+对问题进行分类：
+- **就绪**：没有未满足的依赖关系，未开始
+- **阻塞**：有未满足的依赖关系
+- **进行中**：已经在处理中
+- **完成**：已完成
 
-### 3. Analyze Ready Issues
+### 3. 分析就绪的问题
 
-For each ready issue without analysis:
+对于每个没有分析的就绪问题：
 ```bash
-# Check for analysis
+# 检查分析
 if ! test -f .claude/epics/$ARGUMENTS/{issue}-analysis.md; then
-  echo "Analyzing issue #{issue}..."
-  # Run analysis (inline or via Task tool)
+  echo "正在分析问题 #{issue}..."
+  # 运行分析（内联或通过 Task 工具）
 fi
 ```
 
-### 4. Launch Parallel Agents
+### 4. 启动并行代理
 
-For each ready issue with analysis:
+对于每个有分析的就绪问题：
 
 ```markdown
-## Starting Issue #{issue}: {title}
+## 开始问题 #{issue}：{title}
 
-Reading analysis...
-Found {count} parallel streams:
-  - Stream A: {description} (Agent-{id})
-  - Stream B: {description} (Agent-{id})
+正在读取分析...
+发现 {count} 个并行流：
+  - 流 A：{description} (Agent-{id})
+  - 流 B：{description} (Agent-{id})
 
-Launching agents in branch: epic/$ARGUMENTS
+在分支中启动代理：epic/$ARGUMENTS
 ```
 
-Use Task tool to launch each stream:
+使用 Task 工具启动每个流：
 ```yaml
 Task:
   description: "Issue #{issue} Stream {X}"
   subagent_type: "{agent_type}"
   prompt: |
-    Working in branch: epic/$ARGUMENTS
-    Issue: #{issue} - {title}
-    Stream: {stream_name}
+    工作分支：epic/$ARGUMENTS
+    问题：#{issue} - {title}
+    流：{stream_name}
 
-    Your scope:
-    - Files: {file_patterns}
-    - Work: {stream_description}
+    您的范围：
+    - 文件：{file_patterns}
+    - 工作：{stream_description}
 
-    Read full requirements from:
+    从以下位置读取完整要求：
     - .claude/epics/$ARGUMENTS/{task_file}
     - .claude/epics/$ARGUMENTS/{issue}-analysis.md
 
-    Follow coordination rules in /rules/agent-coordination.md
+    遵循 /rules/agent-coordination.md 中的协调规则
 
-    Commit frequently with message format:
+    频繁提交，使用消息格式：
     "Issue #{issue}: {specific change}"
 
-    Update progress in:
+    在以下位置更新进度：
     .claude/epics/$ARGUMENTS/updates/{issue}/stream-{X}.md
 ```
 
-### 5. Track Active Agents
+### 5. 跟踪活跃代理
 
-Create/update `.claude/epics/$ARGUMENTS/execution-status.md`:
+创建/更新 `.claude/epics/$ARGUMENTS/execution-status.md`：
 
 ```markdown
 ---
@@ -136,57 +136,57 @@ started: {datetime}
 branch: epic/$ARGUMENTS
 ---
 
-# Execution Status
+# 执行状态
 
-## Active Agents
+## 活跃代理
 - Agent-1: Issue #1234 Stream A (Database) - Started {time}
 - Agent-2: Issue #1234 Stream B (API) - Started {time}
 - Agent-3: Issue #1235 Stream A (UI) - Started {time}
 
-## Queued Issues
-- Issue #1236 - Waiting for #1234
-- Issue #1237 - Waiting for #1235
+## 排队问题
+- Issue #1236 - 等待 #1234
+- Issue #1237 - 等待 #1235
 
-## Completed
+## 已完成
 - {None yet}
 ```
 
-### 6. Monitor and Coordinate
+### 6. 监控和协调
 
-Set up monitoring:
+设置监控：
 ```bash
 echo "
-Agents launched successfully!
+代理启动成功！
 
-Monitor progress:
+监控进度：
   /pm:epic-status $ARGUMENTS
 
-View branch changes:
+查看分支更改：
   git status
 
-Stop all agents:
+停止所有代理：
   /pm:epic-stop $ARGUMENTS
 
-Merge when complete:
+完成后合并：
   /pm:epic-merge $ARGUMENTS
 "
 ```
 
-### 7. Handle Dependencies
+### 7. 处理依赖关系
 
-As agents complete streams:
-- Check if any blocked issues are now ready
-- Launch new agents for newly-ready work
-- Update execution-status.md
+当代理完成流时：
+- 检查是否有阻塞的问题现在就绪
+- 为新就绪的工作启动新的代理
+- 更新 execution-status.md
 
-## Output Format
+## 输出格式
 
 ```
-🚀 Epic Execution Started: $ARGUMENTS
+🚀 史诗执行已开始：$ARGUMENTS
 
-Branch: epic/$ARGUMENTS
+分支：epic/$ARGUMENTS
 
-Launching {total} agents across {issue_count} issues:
+在 {issue_count} 个问题中启动 {total} 个代理：
 
 Issue #1234: Database Schema
   ├─ Stream A: Schema creation (Agent-1) ✓ Started
@@ -197,51 +197,51 @@ Issue #1235: API Endpoints
   ├─ Stream B: Post endpoints (Agent-4) ✓ Started
   └─ Stream C: Tests (Agent-5) ⏸ Waiting for A & B
 
-Blocked Issues (2):
+阻塞问题 (2):
   - #1236: UI Components (depends on #1234)
   - #1237: Integration (depends on #1235, #1236)
 
-Monitor with: /pm:epic-status $ARGUMENTS
+使用以下命令监控：/pm:epic-status $ARGUMENTS
 ```
 
-## Error Handling
+## 错误处理
 
-If agent launch fails:
+如果代理启动失败：
 ```
-❌ Failed to start Agent-{id}
-  Issue: #{issue}
-  Stream: {stream}
-  Error: {reason}
+❌ 启动代理失败 Agent-{id}
+  问题：#{issue}
+  流：{stream}
+  错误：{reason}
 
-Continue with other agents? (yes/no)
+继续其他代理？（yes/no）
 ```
 
-If uncommitted changes are found:
+如果发现未提交的更改：
 ```
-❌ You have uncommitted changes. Please commit or stash them before starting an epic.
+❌ 您有未提交的更改。请在开始史诗前提交或暂存它们。
 
-To commit changes:
+要提交更改：
   git add .
-  git commit -m "Your commit message"
+  git commit -m "您的提交消息"
 
-To stash changes:
-  git stash push -m "Work in progress"
-  # (Later restore with: git stash pop)
+要暂存更改：
+  git stash push -m "进行中的工作"
+  # (稍后恢复：git stash pop)
 ```
 
-If branch creation fails:
+如果分支创建失败：
 ```
-❌ Cannot create branch
-  {git error message}
+❌ 无法创建分支
+  {git 错误消息}
 
-Try: git branch -d epic/$ARGUMENTS
-Or: Check existing branches with: git branch -a
+尝试：git branch -d epic/$ARGUMENTS
+或者：使用 git branch -a 检查现有分支
 ```
 
-## Important Notes
+## 重要说明
 
-- Follow `/rules/branch-operations.md` for git operations
-- Follow `/rules/agent-coordination.md` for parallel work
-- Agents work in the SAME branch (not separate branches)
-- Maximum parallel agents should be reasonable (e.g., 5-10)
-- Monitor system resources if launching many agents
+- 遵循 `/rules/branch-operations.md` 进行 git 操作
+- 遵循 `/rules/agent-coordination.md` 进行并行工作
+- 代理在同一分支中工作（不是单独分支）
+- 最大并行代理数量应合理（例如，5-10）
+- 如果启动多个代理，请监控系统资源

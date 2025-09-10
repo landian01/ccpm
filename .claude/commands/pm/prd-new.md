@@ -2,147 +2,147 @@
 allowed-tools: Bash, Read, Write, LS
 ---
 
-# PRD New
+# PRD 新建
 
-Launch brainstorming for new product requirement document.
+为新产品需求文档启动头脑风暴。
 
-## Usage
+## 用法
 ```
 /pm:prd-new <feature_name>
 ```
 
-## Required Rules
+## 必需规则
 
-**IMPORTANT:** Before executing this command, read and follow:
-- `.claude/rules/datetime.md` - For getting real current date/time
+**重要**：执行此命令前，请阅读并遵循：
+- `.claude/rules/datetime.md` - 获取真实的当前日期/时间
 
-## Preflight Checklist
+## 飞行前检查清单
 
-Before proceeding, complete these validation steps.
-Do not bother the user with preflight checks progress ("I'm not going to ..."). Just do them and move on.
+在继续之前，完成这些验证步骤。
+不要用飞行前检查进度打扰用户（"我不会..."）。只需完成它们并继续。
 
-### Input Validation
-1. **Validate feature name format:**
-   - Must contain only lowercase letters, numbers, and hyphens
-   - Must start with a letter
-   - No spaces or special characters allowed
-   - If invalid, tell user: "❌ Feature name must be kebab-case (lowercase letters, numbers, hyphens only). Examples: user-auth, payment-v2, notification-system"
+### 输入验证
+1. **验证功能名称格式：**
+   - 必须只包含小写字母、数字和连字符
+   - 必须以字母开头
+   - 不允许空格或特殊字符
+   - 如果无效，告诉用户："❌ 功能名称必须是 kebab-case（仅小写字母、数字、连字符）。示例：user-auth、payment-v2、notification-system"
 
-2. **Check for existing PRD:**
-   - Check if `.claude/prds/$ARGUMENTS.md` already exists
-   - If it exists, ask user: "⚠️ PRD '$ARGUMENTS' already exists. Do you want to overwrite it? (yes/no)"
-   - Only proceed with explicit 'yes' confirmation
-   - If user says no, suggest: "Use a different name or run: /pm:prd-parse $ARGUMENTS to create an epic from the existing PRD"
+2. **检查现有 PRD：**
+   - 检查 `.claude/prds/$ARGUMENTS.md` 是否已存在
+   - 如果存在，询问用户："⚠️ PRD '$ARGUMENTS' 已存在。您要覆盖它吗？（yes/no）"
+   - 只有在明确确认 'yes' 时才继续
+   - 如果用户说 no，建议："使用不同的名称或运行：/pm:prd-parse $ARGUMENTS 从现有 PRD 创建史诗"
 
-3. **Verify directory structure:**
-   - Check if `.claude/prds/` directory exists
-   - If not, create it first
-   - If unable to create, tell user: "❌ Cannot create PRD directory. Please manually create: .claude/prds/"
+3. **验证目录结构：**
+   - 检查 `.claude/prds/` 目录是否存在
+   - 如果不存在，先创建它
+   - 如果无法创建，告诉用户："❌ 无法创建 PRD 目录。请手动创建：.claude/prds/"
 
-## Instructions
+## 指令
 
-You are a product manager creating a comprehensive Product Requirements Document (PRD) for: **$ARGUMENTS**
+您是为 **$ARGUMENTS** 创建全面产品需求文档（PRD）的产品经理。
 
-Follow this structured approach:
+遵循这个结构化方法：
 
-### 1. Discovery & Context
-- Ask clarifying questions about the feature/product "$ARGUMENTS"
-- Understand the problem being solved
-- Identify target users and use cases
-- Gather constraints and requirements
+### 1. 发现和上下文
+- 询问关于功能/产品 "$ARGUMENTS" 的澄清问题
+- 了解正在解决的问题
+- 识别目标用户和用例
+- 收集约束和需求
 
-### 2. PRD Structure
-Create a comprehensive PRD with these sections:
+### 2. PRD 结构
+创建包含这些部分的全面 PRD：
 
-#### Executive Summary
-- Brief overview and value proposition
+#### 执行摘要
+- 简要概述和价值主张
 
-#### Problem Statement
-- What problem are we solving?
-- Why is this important now?
+#### 问题陈述
+- 我们在解决什么问题？
+- 为什么现在很重要？
 
-#### User Stories
-- Primary user personas
-- Detailed user journeys
-- Pain points being addressed
+#### 用户故事
+- 主要用户角色
+- 详细的用户旅程
+- 正在解决的痛点
 
-#### Requirements
-**Functional Requirements**
-- Core features and capabilities
-- User interactions and flows
+#### 需求
+**功能需求**
+- 核心功能和能力
+- 用户交互和流程
 
-**Non-Functional Requirements**
-- Performance expectations
-- Security considerations
-- Scalability needs
+**非功能需求**
+- 性能期望
+- 安全考虑
+- 可扩展性需求
 
-#### Success Criteria
-- Measurable outcomes
-- Key metrics and KPIs
+#### 成功标准
+- 可衡量的结果
+- 关键指标和 KPI
 
-#### Constraints & Assumptions
-- Technical limitations
-- Timeline constraints
-- Resource limitations
+#### 约束和假设
+- 技术限制
+- 时间限制
+- 资源限制
 
-#### Out of Scope
-- What we're explicitly NOT building
+#### 范围外
+- 我们明确不构建什么
 
-#### Dependencies
-- External dependencies
-- Internal team dependencies
+#### 依赖关系
+- 外部依赖
+- 内部团队依赖
 
-### 3. File Format with Frontmatter
-Save the completed PRD to: `.claude/prds/$ARGUMENTS.md` with this exact structure:
+### 3. 带 Frontmatter 的文件格式
+将完成的 PRD 保存到：`.claude/prds/$ARGUMENTS.md`，使用这个确切的结构：
 
 ```markdown
 ---
 name: $ARGUMENTS
-description: [Brief one-line description of the PRD]
+description: [PRD 的简要一行描述]
 status: backlog
-created: [Current ISO date/time]
+created: [当前 ISO 日期/时间]
 ---
 
 # PRD: $ARGUMENTS
 
-## Executive Summary
-[Content...]
+## 执行摘要
+[内容...]
 
-## Problem Statement
-[Content...]
+## 问题陈述
+[内容...]
 
-[Continue with all sections...]
+[继续所有部分...]
 ```
 
-### 4. Frontmatter Guidelines
-- **name**: Use the exact feature name (same as $ARGUMENTS)
-- **description**: Write a concise one-line summary of what this PRD covers
-- **status**: Always start with "backlog" for new PRDs
-- **created**: Get REAL current datetime by running: `date -u +"%Y-%m-%dT%H:%M:%SZ"`
-  - Never use placeholder text
-  - Must be actual system time in ISO 8601 format
+### 4. Frontmatter 指南
+- **name**：使用确切的功能名称（与 $ARGUMENTS 相同）
+- **description**：编写此 PRD 涵盖内容的简洁一行摘要
+- **status**：新 PRD 始终以 "backlog" 开始
+- **created**：通过运行获取真实当前日期时间：`date -u +"%Y-%m-%dT%H:%M:%SZ"`
+  - 永远不要使用占位符文本
+  - 必须是 ISO 8601 格式的实际系统时间
 
-### 5. Quality Checks
+### 5. 质量检查
 
-Before saving the PRD, verify:
-- [ ] All sections are complete (no placeholder text)
-- [ ] User stories include acceptance criteria
-- [ ] Success criteria are measurable
-- [ ] Dependencies are clearly identified
-- [ ] Out of scope items are explicitly listed
+保存 PRD 前，验证：
+- [ ] 所有部分都已完成（无占位符文本）
+- [ ] 用户故事包含验收标准
+- [ ] 成功标准是可衡量的
+- [ ] 依赖关系已明确识别
+- [ ] 范围外项目已明确列出
 
-### 6. Post-Creation
+### 6. 创建后
 
-After successfully creating the PRD:
-1. Confirm: "✅ PRD created: .claude/prds/$ARGUMENTS.md"
-2. Show brief summary of what was captured
-3. Suggest next step: "Ready to create implementation epic? Run: /pm:prd-parse $ARGUMENTS"
+成功创建 PRD 后：
+1. 确认："✅ PRD 已创建：.claude/prds/$ARGUMENTS.md"
+2. 显示捕获内容的简要摘要
+3. 建议下一步："准备好创建实施史诗了吗？运行：/pm:prd-parse $ARGUMENTS"
 
-## Error Recovery
+## 错误恢复
 
-If any step fails:
-- Clearly explain what went wrong
-- Provide specific steps to fix the issue
-- Never leave partial or corrupted files
+如果任何步骤失败：
+- 清晰解释出了什么问题
+- 提供修复问题的具体步骤
+- 永远不要留下部分或损坏的文件
 
-Conduct a thorough brainstorming session before writing the PRD. Ask questions, explore edge cases, and ensure comprehensive coverage of the feature requirements for "$ARGUMENTS".
+在编写 PRD 之前进行彻底的头脑风暴会议。提问、探索边缘情况，并确保全面覆盖 "$ARGUMENTS" 的功能需求。

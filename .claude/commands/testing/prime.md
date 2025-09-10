@@ -2,56 +2,56 @@
 allowed-tools: Bash, Read, Write, LS
 ---
 
-# Prime Testing Environment
+# 准备测试环境
 
-This command prepares the testing environment by detecting the test framework, validating dependencies, and configuring the test-runner agent for optimal test execution.
+此命令通过检测测试框架、验证依赖项并配置测试运行器代理来准备测试环境，以实现最佳测试执行。
 
-## Preflight Checklist
+## 飞行前检查清单
 
-Before proceeding, complete these validation steps.
-Do not bother the user with preflight checks progress ("I'm not going to ..."). Just do them and move on.
+在继续之前，完成这些验证步骤。
+不要用飞行前检查进度打扰用户（"我不会去..."）。直接执行并继续。
 
-### 1. Test Framework Detection
+### 1. 测试框架检测
 
-**JavaScript/Node.js:**
-- Check package.json for test scripts: `grep -E '"test"|"spec"|"jest"|"mocha"' package.json 2>/dev/null`
-- Look for test config files: `ls -la jest.config.* mocha.opts .mocharc.* 2>/dev/null`
-- Check for test directories: `find . -type d \( -name "test" -o -name "tests" -o -name "__tests__" -o -name "spec" \) -maxdepth 3 2>/dev/null`
+**JavaScript/Node.js：**
+- 检查 package.json 中的测试脚本：`grep -E '"test"|"spec"|"jest"|"mocha"' package.json 2>/dev/null`
+- 查找测试配置文件：`ls -la jest.config.* mocha.opts .mocharc.* 2>/dev/null`
+- 检查测试目录：`find . -type d \( -name "test" -o -name "tests" -o -name "__tests__" -o -name "spec" \) -maxdepth 3 2>/dev/null`
 
-**Python:**
-- Check for pytest: `find . -name "pytest.ini" -o -name "conftest.py" -o -name "setup.cfg" 2>/dev/null | head -5`
-- Check for unittest: `find . -path "*/test*.py" -o -path "*/test_*.py" 2>/dev/null | head -5`
-- Check requirements: `grep -E "pytest|unittest|nose" requirements.txt 2>/dev/null`
+**Python：**
+- 检查 pytest：`find . -name "pytest.ini" -o -name "conftest.py" -o -name "setup.cfg" 2>/dev/null | head -5`
+- 检查 unittest：`find . -path "*/test*.py" -o -path "*/test_*.py" 2>/dev/null | head -5`
+- 检查要求：`grep -E "pytest|unittest|nose" requirements.txt 2>/dev/null`
 
-**Rust:**
-- Check for Cargo tests: `grep -E '\[dev-dependencies\]' Cargo.toml 2>/dev/null`
-- Look for test modules: `find . -name "*.rs" -exec grep -l "#\[cfg(test)\]" {} \; 2>/dev/null | head -5`
+**Rust：**
+- 检查 Cargo 测试：`grep -E '\[dev-dependencies\]' Cargo.toml 2>/dev/null`
+- 查找测试模块：`find . -name "*.rs" -exec grep -l "#\[cfg(test)\]" {} \; 2>/dev/null | head -5`
 
-**Go:**
-- Check for test files: `find . -name "*_test.go" 2>/dev/null | head -5`
-- Check go.mod exists: `test -f go.mod && echo "Go module found"`
+**Go：**
+- 检查测试文件：`find . -name "*_test.go" 2>/dev/null | head -5`
+- 检查 go.mod 是否存在：`test -f go.mod && echo "Go 模块已找到"`
 
-**Other Languages:**
-- Ruby: Check for RSpec: `find . -name ".rspec" -o -name "spec_helper.rb" 2>/dev/null`
-- Java: Check for JUnit: `find . -name "pom.xml" -exec grep -l "junit" {} \; 2>/dev/null`
+**其他语言：**
+- Ruby：检查 RSpec：`find . -name ".rspec" -o -name "spec_helper.rb" 2>/dev/null`
+- Java：检查 JUnit：`find . -name "pom.xml" -exec grep -l "junit" {} \; 2>/dev/null`
 
-### 2. Test Environment Validation
+### 2. 测试环境验证
 
-If no test framework detected:
-- Tell user: "⚠️ No test framework detected. Please specify your testing setup."
-- Ask: "What test command should I use? (e.g., npm test, pytest, cargo test)"
-- Store response for future use
+如果未检测到测试框架：
+- 告诉用户："⚠️ 未检测到测试框架。请指定您的测试设置。"
+- 询问："我应该使用什么测试命令？（例如，npm test、pytest、cargo test）"
+- 存储响应以供将来使用
 
-### 3. Dependency Check
+### 3. 依赖项检查
 
-**For detected framework:**
-- Node.js: Run `npm list --depth=0 2>/dev/null | grep -E "jest|mocha|chai|jasmine"`
-- Python: Run `pip list 2>/dev/null | grep -E "pytest|unittest|nose"`
-- Verify test dependencies are installed
+**对于检测到的框架：**
+- Node.js：运行 `npm list --depth=0 2>/dev/null | grep -E "jest|mocha|chai|jasmine"`
+- Python：运行 `pip list 2>/dev/null | grep -E "pytest|unittest|nose"`
+- 验证测试依赖项是否已安装
 
-If dependencies missing:
-- Tell user: "❌ Test dependencies not installed"
-- Suggest: "Run: npm install (or pip install -r requirements.txt)"
+如果缺少依赖项：
+- 告诉用户："❌ 测试依赖项未安装"
+- 建议："运行：npm install（或 pip install -r requirements.txt）"
 
 ## Instructions
 

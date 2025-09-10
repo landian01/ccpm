@@ -2,31 +2,31 @@
 allowed-tools: Bash, Read, Write
 ---
 
-# Epic Merge
+# 史诗合并
 
-Merge completed epic from worktree back to main branch.
+将已完成的史诗从工作树合并回主分支。
 
-## Usage
+## 用法
 ```
 /pm:epic-merge <epic_name>
 ```
 
-## Quick Check
+## 快速检查
 
-1. **Verify worktree exists:**
+1. **验证工作树是否存在：**
    ```bash
-   git worktree list | grep "epic-$ARGUMENTS" || echo "❌ No worktree for epic: $ARGUMENTS"
+   git worktree list | grep "epic-$ARGUMENTS" || echo "❌ 没有史诗的工作树：$ARGUMENTS"
    ```
 
-2. **Check for active agents:**
-   Read `.claude/epics/$ARGUMENTS/execution-status.md`
-   If active agents exist: "⚠️ Active agents detected. Stop them first with: /pm:epic-stop $ARGUMENTS"
+2. **检查活跃代理：**
+   读取 `.claude/epics/$ARGUMENTS/execution-status.md`
+   如果存在活跃代理："⚠️ 检测到活跃代理。请先使用以下命令停止它们：/pm:epic-stop $ARGUMENTS"
 
-## Instructions
+## 指令
 
-### 1. Pre-Merge Validation
+### 1. 合并前验证
 
-Navigate to worktree and check status:
+导航到工作树并检查状态：
 ```bash
 cd ../epic-$ARGUMENTS
 

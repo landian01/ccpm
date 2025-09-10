@@ -1,4 +1,4 @@
-# Quick Install
+# 快速安装
 
 ## Unix/Linux/macOS
 
@@ -6,7 +6,7 @@
 curl -sSL https://raw.githubusercontent.com/automazeio/ccpm/main/ccpm.sh | bash
 ```
 
-Or with wget:
+或者使用 wget：
 
 ```bash
 wget -qO- https://raw.githubusercontent.com/automazeio/ccpm/main/ccpm.sh | bash
@@ -18,15 +18,15 @@ wget -qO- https://raw.githubusercontent.com/automazeio/ccpm/main/ccpm.sh | bash
 iwr -useb https://raw.githubusercontent.com/automazeio/ccpm/main/ccpm.bat | iex
 ```
 
-Or download and execute:
+或者下载并执行：
 
 ```powershell
 curl -o ccpm.bat https://raw.githubusercontent.com/automazeio/ccpm/main/ccpm.bat && ccpm.bat
 ```
 
-## One-liner alternatives
+## 单行命令替代方案
 
-### Unix/Linux/macOS (direct commands)
+### Unix/Linux/macOS (直接命令)
 ```bash
 git clone https://github.com/automazeio/ccpm.git . && rm -rf .git
 ```

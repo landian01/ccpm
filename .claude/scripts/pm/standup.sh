@@ -1,53 +1,53 @@
 #!/bin/bash
 
-echo "📅 Daily Standup - $(date '+%Y-%m-%d')"
+echo "📅 每日站会 - $(date '+%Y-%m-%d')"
 echo "================================"
 echo ""
 
 today=$(date '+%Y-%m-%d')
 
-echo "Getting status..."
+echo "正在获取状态..."
 echo ""
 echo ""
 
-echo "📝 Today's Activity:"
+echo "📝 今日活动:"
 echo "===================="
 echo ""
 
-# Find files modified today
+# 查找今日修改的文件
 recent_files=$(find .claude -name "*.md" -mtime -1 2>/dev/null)
 
 if [ -n "$recent_files" ]; then
-  # Count by type
+  # 按类型计数
   prd_count=$(echo "$recent_files" | grep -c "/prds/" || echo 0)
   epic_count=$(echo "$recent_files" | grep -c "/epic.md" || echo 0)
   task_count=$(echo "$recent_files" | grep -c "/[0-9]*.md" || echo 0)
   update_count=$(echo "$recent_files" | grep -c "/updates/" || echo 0)
 
-  [ $prd_count -gt 0 ] && echo "  • Modified $prd_count PRD(s)"
-  [ $epic_count -gt 0 ] && echo "  • Updated $epic_count epic(s)"
-  [ $task_count -gt 0 ] && echo "  • Worked on $task_count task(s)"
-  [ $update_count -gt 0 ] && echo "  • Posted $update_count progress update(s)"
+  [ $prd_count -gt 0 ] && echo "  • 修改了 $prd_count 个 PRD"
+  [ $epic_count -gt 0 ] && echo "  • 更新了 $epic_count 个史诗"
+  [ $task_count -gt 0 ] && echo "  • 处理了 $task_count 个任务"
+  [ $update_count -gt 0 ] && echo "  • 发布了 $update_count 个进度更新"
 else
-  echo "  No activity recorded today"
+  echo "  今日未记录活动"
 fi
 
 echo ""
-echo "🔄 Currently In Progress:"
-# Show active work items
+echo "🔄 正在进行中:"
+# 显示活跃的工作项
 for updates_dir in .claude/epics/*/updates/*/; do
   [ -d "$updates_dir" ] || continue
   if [ -f "$updates_dir/progress.md" ]; then
     issue_num=$(basename "$updates_dir")
     epic_name=$(basename $(dirname $(dirname "$updates_dir")))
     completion=$(grep "^completion:" "$updates_dir/progress.md" | head -1 | sed 's/^completion: *//')
-    echo "  • Issue #$issue_num ($epic_name) - ${completion:-0%} complete"
+    echo "  • 问题 #$issue_num ($epic_name) - ${completion:-0%} 已完成"
   fi
 done
 
 echo ""
-echo "⏭️ Next Available Tasks:"
-# Show top 3 available tasks
+echo "⏭️ 下一个可用任务:"
+# 显示前 3 个可用任务
 count=0
 for epic_dir in .claude/epics/*/; do
   [ -d "$epic_dir" ] || continue
@@ -68,10 +68,10 @@ for epic_dir in .claude/epics/*/; do
 done
 
 echo ""
-echo "📊 Quick Stats:"
+echo "📊 快速统计:"
 total_tasks=$(find .claude/epics -name "[0-9]*.md" 2>/dev/null | wc -l)
 open_tasks=$(find .claude/epics -name "[0-9]*.md" -exec grep -l "^status: *open" {} \; 2>/dev/null | wc -l)
 closed_tasks=$(find .claude/epics -name "[0-9]*.md" -exec grep -l "^status: *closed" {} \; 2>/dev/null | wc -l)
-echo "  Tasks: $open_tasks open, $closed_tasks closed, $total_tasks total"
+echo "  任务: $open_tasks 个开放, $closed_tasks 个已关闭, 总数 $total_tasks"
 
 exit 0

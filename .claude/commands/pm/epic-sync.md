@@ -2,65 +2,65 @@
 allowed-tools: Bash, Read, Write, LS, Task
 ---
 
-# Epic Sync
+# 史诗同步
 
-Push epic and tasks to GitHub as issues.
+将史诗和任务推送到 GitHub 作为问题。
 
-## Usage
+## 用法
 ```
 /pm:epic-sync <feature_name>
 ```
 
-## Quick Check
+## 快速检查
 
 ```bash
-# Verify epic exists
-test -f .claude/epics/$ARGUMENTS/epic.md || echo "❌ Epic not found. Run: /pm:prd-parse $ARGUMENTS"
+# 验证史诗是否存在
+test -f .claude/epics/$ARGUMENTS/epic.md || echo "❌ 未找到史诗。运行：/pm:prd-parse $ARGUMENTS"
 
-# Count task files
+# 计算任务文件数量
 ls .claude/epics/$ARGUMENTS/*.md 2>/dev/null | grep -v epic.md | wc -l
 ```
 
-If no tasks found: "❌ No tasks to sync. Run: /pm:epic-decompose $ARGUMENTS"
+如果未找到任务："❌ 没有要同步的任务。运行：/pm:epic-decompose $ARGUMENTS"
 
-## Instructions
+## 指令
 
-### 0. Check Remote Repository
+### 0. 检查远程仓库
 
-Follow `/rules/github-operations.md` to ensure we're not syncing to the CCPM template:
+遵循 `/rules/github-operations.md` 确保我们不是同步到 CCPM 模板：
 
 ```bash
-# Check if remote origin is the CCPM template repository
+# 检查远程 origin 是否是 CCPM 模板仓库
 remote_url=$(git remote get-url origin 2>/dev/null || echo "")
 if [[ "$remote_url" == *"automazeio/ccpm"* ]] || [[ "$remote_url" == *"automazeio/ccpm.git"* ]]; then
-  echo "❌ ERROR: You're trying to sync with the CCPM template repository!"
+  echo "❌ 错误：您正在尝试与 CCPM 模板仓库同步！"
   echo ""
-  echo "This repository (automazeio/ccpm) is a template for others to use."
-  echo "You should NOT create issues or PRs here."
+  echo "此仓库（automazeio/ccpm）是供他人使用的模板。"
+  echo "您不应该在此处创建问题或拉取请求。"
   echo ""
-  echo "To fix this:"
-  echo "1. Fork this repository to your own GitHub account"
-  echo "2. Update your remote origin:"
+  echo "要解决此问题："
+  echo "1. 将此仓库 fork 到您自己的 GitHub 账户"
+  echo "2. 更新您的远程 origin："
   echo "   git remote set-url origin https://github.com/YOUR_USERNAME/YOUR_REPO.git"
   echo ""
-  echo "Or if this is a new project:"
-  echo "1. Create a new repository on GitHub"
-  echo "2. Update your remote origin:"
+  echo "或者如果这是一个新项目："
+  echo "1. 在 GitHub 上创建新仓库"
+  echo "2. 更新您的远程 origin："
   echo "   git remote set-url origin https://github.com/YOUR_USERNAME/YOUR_REPO.git"
   echo ""
-  echo "Current remote: $remote_url"
+  echo "当前远程：$remote_url"
   exit 1
 fi
 ```
 
-### 1. Create Epic Issue
+### 1. 创建史诗问题
 
-Strip frontmatter and prepare GitHub issue body:
+移除前置元数据并准备 GitHub 问题正文：
 ```bash
-# Extract content without frontmatter
+# 提取不含前置元数据的内容
 sed '1,/^---$/d; 1,/^---$/d' .claude/epics/$ARGUMENTS/epic.md > /tmp/epic-body-raw.md
 
-# Remove "## Tasks Created" section and replace with Stats
+# 移除 "## Tasks Created" 部分并替换为统计信息
 awk '
   /^## Tasks Created/ {
     in_tasks=1
@@ -68,13 +68,13 @@ awk '
   }
   /^## / && in_tasks {
     in_tasks=0
-    # When we hit the next section after Tasks Created, add Stats
+    # 当我们到达 Tasks Created 之后的下一部分时，添加统计信息
     if (total_tasks) {
-      print "## Stats\n"
-      print "Total tasks: " total_tasks
-      print "Parallel tasks: " parallel_tasks " (can be worked on simultaneously)"
-      print "Sequential tasks: " sequential_tasks " (have dependencies)"
-      if (total_effort) print "Estimated total effort: " total_effort " hours"
+      print "## 统计\n"
+      print "总任务数：" total_tasks
+      print "并行任务：" parallel_tasks "（可以同时进行）"
+      print "顺序任务：" sequential_tasks "（有依赖关系）"
+      if (total_effort) print "预估总工作量：" total_effort " 小时"
       print ""
     }
   }
@@ -88,25 +88,25 @@ awk '
   }
   !in_tasks { print }
   END {
-    # If we were still in tasks section at EOF, add stats
+    # 如果我们在 EOF 时仍在任务部分，添加统计信息
     if (in_tasks && total_tasks) {
-      print "## Stats\n"
-      print "Total tasks: " total_tasks
-      print "Parallel tasks: " parallel_tasks " (can be worked on simultaneously)"
-      print "Sequential tasks: " sequential_tasks " (have dependencies)"
-      if (total_effort) print "Estimated total effort: " total_effort
+      print "## 统计\n"
+      print "总任务数：" total_tasks
+      print "并行任务：" parallel_tasks "（可以同时进行）"
+      print "顺序任务：" sequential_tasks "（有依赖关系）"
+      if (total_effort) print "预估总工作量：" total_effort
     }
   }
 ' /tmp/epic-body-raw.md > /tmp/epic-body.md
 
-# Determine epic type (feature vs bug) from content
+# 根据内容确定史诗类型（功能 vs 错误）
 if grep -qi "bug\|fix\|issue\|problem\|error" /tmp/epic-body.md; then
   epic_type="bug"
 else
   epic_type="feature"
 fi
 
-# Create epic issue with labels
+# 创建带有标签的史诗问题
 epic_number=$(gh issue create \
   --title "Epic: $ARGUMENTS" \
   --body-file /tmp/epic-body.md \
@@ -114,40 +114,40 @@ epic_number=$(gh issue create \
   --json number -q .number)
 ```
 
-Store the returned issue number for epic frontmatter update.
+存储返回的问题编号用于史诗前置元数据更新。
 
-### 2. Create Task Sub-Issues
+### 2. 创建任务子问题
 
-Check if gh-sub-issue is available:
+检查 gh-sub-issue 是否可用：
 ```bash
 if gh extension list | grep -q "yahsan2/gh-sub-issue"; then
   use_subissues=true
 else
   use_subissues=false
-  echo "⚠️ gh-sub-issue not installed. Using fallback mode."
+  echo "⚠️ 未安装 gh-sub-issue。使用备用模式。"
 fi
 ```
 
-Count task files to determine strategy:
+计算任务文件以确定策略：
 ```bash
 task_count=$(ls .claude/epics/$ARGUMENTS/[0-9][0-9][0-9].md 2>/dev/null | wc -l)
 ```
 
-### For Small Batches (< 5 tasks): Sequential Creation
+### 对于小批量（< 5 个任务）：顺序创建
 
 ```bash
 if [ "$task_count" -lt 5 ]; then
-  # Create sequentially for small batches
+  # 小批量顺序创建
   for task_file in .claude/epics/$ARGUMENTS/[0-9][0-9][0-9].md; do
     [ -f "$task_file" ] || continue
 
-    # Extract task name from frontmatter
+    # 从前置元数据中提取任务名称
     task_name=$(grep '^name:' "$task_file" | sed 's/^name: *//')
 
-    # Strip frontmatter from task content
+    # 从任务内容中移除前置元数据
     sed '1,/^---$/d; 1,/^---$/d' "$task_file" > /tmp/task-body.md
 
-    # Create sub-issue with labels
+    # 创建带有标签的子问题
     if [ "$use_subissues" = true ]; then
       task_number=$(gh sub-issue create \
         --parent "$epic_number" \
@@ -163,206 +163,206 @@ if [ "$task_count" -lt 5 ]; then
         --json number -q .number)
     fi
 
-    # Record mapping for renaming
+    # 记录映射用于重命名
     echo "$task_file:$task_number" >> /tmp/task-mapping.txt
   done
 
-  # After creating all issues, update references and rename files
-  # This follows the same process as step 3 below
+  # 创建所有问题后，更新引用并重命名文件
+  # 这遵循与下面步骤 3 相同的过程
 fi
 ```
 
-### For Larger Batches: Parallel Creation
+### 对于大批量：并行创建
 
 ```bash
 if [ "$task_count" -ge 5 ]; then
-  echo "Creating $task_count sub-issues in parallel..."
+  echo "正在并行创建 $task_count 个子问题..."
 
-  # Check if gh-sub-issue is available for parallel agents
+  # 检查并行代理是否可用 gh-sub-issue
   if gh extension list | grep -q "yahsan2/gh-sub-issue"; then
     subissue_cmd="gh sub-issue create --parent $epic_number"
   else
     subissue_cmd="gh issue create"
   fi
 
-  # Batch tasks for parallel processing
-  # Spawn agents to create sub-issues in parallel with proper labels
-  # Each agent must use: --label "task,epic:$ARGUMENTS"
+  # 批量处理任务进行并行处理
+  # 启动代理并行创建带有适当标签的子问题
+  # 每个代理必须使用：--label "task,epic:$ARGUMENTS"
 fi
 ```
 
-Use Task tool for parallel creation:
+使用 Task 工具进行并行创建：
 ```yaml
 Task:
-  description: "Create GitHub sub-issues batch {X}"
+  description: "创建 GitHub 子问题批次 {X}"
   subagent_type: "general-purpose"
   prompt: |
-    Create GitHub sub-issues for tasks in epic $ARGUMENTS
-    Parent epic issue: #$epic_number
+    为史诗 $ARGUMENTS 中的任务创建 GitHub 子问题
+    父史诗问题：#$epic_number
 
-    Tasks to process:
-    - {list of 3-4 task files}
+    要处理的任务：
+    - {3-4 个任务文件的列表}
 
-    For each task file:
-    1. Extract task name from frontmatter
-    2. Strip frontmatter using: sed '1,/^---$/d; 1,/^---$/d'
-    3. Create sub-issue using:
-       - If gh-sub-issue available:
+    对于每个任务文件：
+    1. 从前置元数据中提取任务名称
+    2. 使用以下方法移除前置元数据：sed '1,/^---$/d; 1,/^---$/d'
+    3. 创建子问题使用：
+       - 如果 gh-sub-issue 可用：
          gh sub-issue create --parent $epic_number --title "$task_name" \
            --body-file /tmp/task-body.md --label "task,epic:$ARGUMENTS"
-       - Otherwise:
+       - 否则：
          gh issue create --title "$task_name" --body-file /tmp/task-body.md \
            --label "task,epic:$ARGUMENTS"
-    4. Record: task_file:issue_number
+    4. 记录：task_file:issue_number
 
-    IMPORTANT: Always include --label parameter with "task,epic:$ARGUMENTS"
+    重要：始终包含带有 "task,epic:$ARGUMENTS" 的 --label 参数
 
-    Return mapping of files to issue numbers.
+    返回文件到问题编号的映射。
 ```
 
-Consolidate results from parallel agents:
+整合来自并行代理的结果：
 ```bash
-# Collect all mappings from agents
+# 收集来自代理的所有映射
 cat /tmp/batch-*/mapping.txt >> /tmp/task-mapping.txt
 
-# IMPORTANT: After consolidation, follow step 3 to:
-# 1. Build old->new ID mapping
-# 2. Update all task references (depends_on, conflicts_with)
-# 3. Rename files with proper frontmatter updates
+# 重要：整合后，遵循步骤 3：
+# 1. 构建 旧->新 ID 映射
+# 2. 更新所有任务引用（depends_on, conflicts_with）
+# 3. 重命名文件并进行适当的前置元数据更新
 ```
 
-### 3. Rename Task Files and Update References
+### 3. 重命名任务文件并更新引用
 
-First, build a mapping of old numbers to new issue IDs:
+首先，构建旧编号到新问题 ID 的映射：
 ```bash
-# Create mapping from old task numbers (001, 002, etc.) to new issue IDs
+# 创建从旧任务编号（001、002 等）到新问题 ID 的映射
 > /tmp/id-mapping.txt
 while IFS=: read -r task_file task_number; do
-  # Extract old number from filename (e.g., 001 from 001.md)
+  # 从文件名中提取旧编号（例如，从 001.md 中提取 001）
   old_num=$(basename "$task_file" .md)
   echo "$old_num:$task_number" >> /tmp/id-mapping.txt
 done < /tmp/task-mapping.txt
 ```
 
-Then rename files and update all references:
+然后重命名文件并更新所有引用：
 ```bash
-# Process each task file
+# 处理每个任务文件
 while IFS=: read -r task_file task_number; do
   new_name="$(dirname "$task_file")/${task_number}.md"
 
-  # Read the file content
+  # 读取文件内容
   content=$(cat "$task_file")
 
-  # Update depends_on and conflicts_with references
+  # 更新 depends_on 和 conflicts_with 引用
   while IFS=: read -r old_num new_num; do
-    # Update arrays like [001, 002] to use new issue numbers
+    # 更新像 [001, 002] 这样的数组以使用新的问题编号
     content=$(echo "$content" | sed "s/\b$old_num\b/$new_num/g")
   done < /tmp/id-mapping.txt
 
-  # Write updated content to new file
+  # 将更新的内容写入新文件
   echo "$content" > "$new_name"
 
-  # Remove old file if different from new
+  # 如果与旧文件不同则删除旧文件
   [ "$task_file" != "$new_name" ] && rm "$task_file"
 
-  # Update github field in frontmatter
-  # Add the GitHub URL to the frontmatter
+  # 更新前置元数据中的 github 字段
+  # 将 GitHub URL 添加到前置元数据
   repo=$(gh repo view --json nameWithOwner -q .nameWithOwner)
   github_url="https://github.com/$repo/issues/$task_number"
 
-  # Update frontmatter with GitHub URL and current timestamp
+  # 使用 GitHub URL 和当前时间戳更新前置元数据
   current_date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-  # Use sed to update the github and updated fields
+  # 使用 sed 更新 github 和 updated 字段
   sed -i.bak "/^github:/c\github: $github_url" "$new_name"
   sed -i.bak "/^updated:/c\updated: $current_date" "$new_name"
   rm "${new_name}.bak"
 done < /tmp/task-mapping.txt
 ```
 
-### 4. Update Epic with Task List (Fallback Only)
+### 4. 用任务列表更新史诗（仅备用模式）
 
-If NOT using gh-sub-issue, add task list to epic:
+如果不使用 gh-sub-issue，将任务列表添加到史诗：
 
 ```bash
 if [ "$use_subissues" = false ]; then
-  # Get current epic body
+  # 获取当前史诗正文
   gh issue view {epic_number} --json body -q .body > /tmp/epic-body.md
 
-  # Append task list
+  # 附加任务列表
   cat >> /tmp/epic-body.md << 'EOF'
 
-  ## Tasks
+  ## 任务
   - [ ] #{task1_number} {task1_name}
   - [ ] #{task2_number} {task2_name}
   - [ ] #{task3_number} {task3_name}
   EOF
 
-  # Update epic issue
+  # 更新史诗问题
   gh issue edit {epic_number} --body-file /tmp/epic-body.md
 fi
 ```
 
-With gh-sub-issue, this is automatic!
+使用 gh-sub-issue，这是自动的！
 
-### 5. Update Epic File
+### 5. 更新史诗文件
 
-Update the epic file with GitHub URL, timestamp, and real task IDs:
+使用 GitHub URL、时间戳和真实任务 ID 更新史诗文件：
 
-#### 5a. Update Frontmatter
+#### 5a. 更新前置元数据
 ```bash
-# Get repo info
+# 获取仓库信息
 repo=$(gh repo view --json nameWithOwner -q .nameWithOwner)
 epic_url="https://github.com/$repo/issues/$epic_number"
 current_date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-# Update epic frontmatter
+# 更新史诗前置元数据
 sed -i.bak "/^github:/c\github: $epic_url" .claude/epics/$ARGUMENTS/epic.md
 sed -i.bak "/^updated:/c\updated: $current_date" .claude/epics/$ARGUMENTS/epic.md
 rm .claude/epics/$ARGUMENTS/epic.md.bak
 ```
 
-#### 5b. Update Tasks Created Section
+#### 5b. 更新已创建任务部分
 ```bash
-# Create a temporary file with the updated Tasks Created section
+# 创建带有更新的已创建任务部分的临时文件
 cat > /tmp/tasks-section.md << 'EOF'
-## Tasks Created
+## 已创建任务
 EOF
 
-# Add each task with its real issue number
+# 添加每个任务及其真实问题编号
 for task_file in .claude/epics/$ARGUMENTS/[0-9]*.md; do
   [ -f "$task_file" ] || continue
 
-  # Get issue number (filename without .md)
+  # 获取问题编号（不含 .md 的文件名）
   issue_num=$(basename "$task_file" .md)
 
-  # Get task name from frontmatter
+  # 从前置元数据中获取任务名称
   task_name=$(grep '^name:' "$task_file" | sed 's/^name: *//')
 
-  # Get parallel status
+  # 获取并行状态
   parallel=$(grep '^parallel:' "$task_file" | sed 's/^parallel: *//')
 
-  # Add to tasks section
-  echo "- [ ] #${issue_num} - ${task_name} (parallel: ${parallel})" >> /tmp/tasks-section.md
+  # 添加到任务部分
+  echo "- [ ] #${issue_num} - ${task_name}（并行：${parallel}）" >> /tmp/tasks-section.md
 done
 
-# Add summary statistics
+# 添加摘要统计
 total_count=$(ls .claude/epics/$ARGUMENTS/[0-9]*.md 2>/dev/null | wc -l)
 parallel_count=$(grep -l '^parallel: true' .claude/epics/$ARGUMENTS/[0-9]*.md 2>/dev/null | wc -l)
 sequential_count=$((total_count - parallel_count))
 
 cat >> /tmp/tasks-section.md << EOF
 
-Total tasks: ${total_count}
-Parallel tasks: ${parallel_count}
-Sequential tasks: ${sequential_count}
+总任务数：${total_count}
+并行任务：${parallel_count}
+顺序任务：${sequential_count}
 EOF
 
-# Replace the Tasks Created section in epic.md
-# First, create a backup
+# 替换 epic.md 中的已创建任务部分
+# 首先，创建备份
 cp .claude/epics/$ARGUMENTS/epic.md .claude/epics/$ARGUMENTS/epic.md.backup
 
-# Use awk to replace the section
+# 使用 awk 替换该部分
 awk '
   /^## Tasks Created/ {
     skip=1
@@ -373,25 +373,25 @@ awk '
   !skip && !/^## Tasks Created/ { print }
 ' .claude/epics/$ARGUMENTS/epic.md.backup > .claude/epics/$ARGUMENTS/epic.md
 
-# Clean up
+# 清理
 rm .claude/epics/$ARGUMENTS/epic.md.backup
 rm /tmp/tasks-section.md
 ```
 
-### 6. Create Mapping File
+### 6. 创建映射文件
 
-Create `.claude/epics/$ARGUMENTS/github-mapping.md`:
+创建 `.claude/epics/$ARGUMENTS/github-mapping.md`：
 ```bash
-# Create mapping file
+# 创建映射文件
 cat > .claude/epics/$ARGUMENTS/github-mapping.md << EOF
-# GitHub Issue Mapping
+# GitHub 问题映射
 
-Epic: #${epic_number} - https://github.com/${repo}/issues/${epic_number}
+史诗：#${epic_number} - https://github.com/${repo}/issues/${epic_number}
 
-Tasks:
+任务：
 EOF
 
-# Add each task mapping
+# 添加每个任务映射
 for task_file in .claude/epics/$ARGUMENTS/[0-9]*.md; do
   [ -f "$task_file" ] || continue
 
@@ -401,55 +401,55 @@ for task_file in .claude/epics/$ARGUMENTS/[0-9]*.md; do
   echo "- #${issue_num}: ${task_name} - https://github.com/${repo}/issues/${issue_num}" >> .claude/epics/$ARGUMENTS/github-mapping.md
 done
 
-# Add sync timestamp
+# 添加同步时间戳
 echo "" >> .claude/epics/$ARGUMENTS/github-mapping.md
-echo "Synced: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> .claude/epics/$ARGUMENTS/github-mapping.md
+echo "同步时间：$(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> .claude/epics/$ARGUMENTS/github-mapping.md
 ```
 
-### 7. Create Worktree
+### 7. 创建工作树
 
-Follow `/rules/worktree-operations.md` to create development worktree:
+遵循 `/rules/worktree-operations.md` 创建开发工作树：
 
 ```bash
-# Ensure main is current
+# 确保 main 是最新的
 git checkout main
 git pull origin main
 
-# Create worktree for epic
+# 为史诗创建工作树
 git worktree add ../epic-$ARGUMENTS -b epic/$ARGUMENTS
 
-echo "✅ Created worktree: ../epic-$ARGUMENTS"
+echo "✅ 已创建工作树：../epic-$ARGUMENTS"
 ```
 
-### 8. Output
+### 8. 输出
 
 ```
-✅ Synced to GitHub
-  - Epic: #{epic_number} - {epic_title}
-  - Tasks: {count} sub-issues created
-  - Labels applied: epic, task, epic:{name}
-  - Files renamed: 001.md → {issue_id}.md
-  - References updated: depends_on/conflicts_with now use issue IDs
-  - Worktree: ../epic-$ARGUMENTS
+✅ 已同步到 GitHub
+  - 史诗：#{epic_number} - {epic_title}
+  - 任务：已创建 {count} 个子问题
+  - 已应用标签：epic, task, epic:{name}
+  - 文件已重命名：001.md → {issue_id}.md
+  - 引用已更新：depends_on/conflicts_with 现在使用问题 ID
+  - 工作树：../epic-$ARGUMENTS
 
-Next steps:
-  - Start parallel execution: /pm:epic-start $ARGUMENTS
-  - Or work on single issue: /pm:issue-start {issue_number}
-  - View epic: https://github.com/{owner}/{repo}/issues/{epic_number}
+下一步：
+  - 开始并行执行：/pm:epic-start $ARGUMENTS
+  - 或处理单个问题：/pm:issue-start {issue_number}
+  - 查看史诗：https://github.com/{owner}/{repo}/issues/{epic_number}
 ```
 
-## Error Handling
+## 错误处理
 
-Follow `/rules/github-operations.md` for GitHub CLI errors.
+遵循 `/rules/github-operations.md` 处理 GitHub CLI 错误。
 
-If any issue creation fails:
-- Report what succeeded
-- Note what failed
-- Don't attempt rollback (partial sync is fine)
+如果任何问题创建失败：
+- 报告成功的内容
+- 注意失败的内容
+- 不要尝试回滚（部分同步是可以的）
 
-## Important Notes
+## 重要说明
 
-- Trust GitHub CLI authentication
-- Don't pre-check for duplicates
-- Update frontmatter only after successful creation
-- Keep operations simple and atomic
+- 相信 GitHub CLI 身份验证
+- 不要预先检查重复项
+- 仅在成功创建后更新前置元数据
+- 保持操作简单和原子化

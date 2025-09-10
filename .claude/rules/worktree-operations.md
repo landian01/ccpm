@@ -1,58 +1,58 @@
-# Worktree Operations
+# 工作树操作
 
-Git worktrees enable parallel development by allowing multiple working directories for the same repository.
+Git 工作树通过允许同一仓库有多个工作目录来实现并行开发。
 
-## Creating Worktrees
+## 创建工作树
 
-Always create worktrees from a clean main branch:
+始终从干净的主分支创建工作树：
 ```bash
-# Ensure main is up to date
+# 确保 main 是最新的
 git checkout main
 git pull origin main
 
-# Create worktree for epic
+# 为史诗创建工作树
 git worktree add ../epic-{name} -b epic/{name}
 ```
 
-The worktree will be created as a sibling directory to maintain clean separation.
+工作树将作为同级目录创建，以保持清晰的分离。
 
-## Working in Worktrees
+## 在工作树中工作
 
-### Agent Commits
-- Agents commit directly to the worktree
-- Use small, focused commits
-- Commit message format: `Issue #{number}: {description}`
-- Example: `Issue #1234: Add user authentication schema`
+### 代理提交
+- 代理直接提交到工作树
+- 使用小的、专注的提交
+- 提交消息格式：`Issue #{number}: {description}`
+- 示例：`Issue #1234: 添加用户身份验证模式`
 
-### File Operations
+### 文件操作
 ```bash
-# Working directory is the worktree
+# 工作目录是工作树
 cd ../epic-{name}
 
-# Normal git operations work
+# 正常的 git 操作工作
 git add {files}
 git commit -m "Issue #{number}: {change}"
 
-# View worktree status
+# 查看工作树状态
 git status
 ```
 
-## Parallel Work in Same Worktree
+## 在同一工作树中并行工作
 
-Multiple agents can work in the same worktree if they touch different files:
+多个代理可以在同一工作树中工作，如果它们处理不同的文件：
 ```bash
-# Agent A works on API
+# 代理 A 在 API 上工作
 git add src/api/*
-git commit -m "Issue #1234: Add user endpoints"
+git commit -m "Issue #1234: 添加用户端点"
 
-# Agent B works on UI (no conflict!)
+# 代理 B 在 UI 上工作（没有冲突！）
 git add src/ui/*
-git commit -m "Issue #1235: Add dashboard component"
+git commit -m "Issue #1235: 添加仪表板组件"
 ```
 
-## Merging Worktrees
+## 合并工作树
 
-When epic is complete, merge back to main:
+当史诗完成时，合并回 main：
 ```bash
 # From main repository (not worktree)
 cd {main-repo}
@@ -67,70 +67,70 @@ git worktree remove ../epic-{name}
 git branch -d epic/{name}
 ```
 
-## Handling Conflicts
+## 处理冲突
 
-If merge conflicts occur:
+如果合并冲突发生：
 ```bash
-# Conflicts will be shown
+# 冲突将会显示
 git status
 
-# Human resolves conflicts
-# Then continue merge
+# 人工解决冲突
+# 然后继续合并
 git add {resolved-files}
 git commit
 ```
 
-## Worktree Management
+## 工作树管理
 
-### List Active Worktrees
+### 列出活动工作树
 ```bash
 git worktree list
 ```
 
-### Remove Stale Worktree
+### 移除过期工作树
 ```bash
-# If worktree directory was deleted
+# 如果工作树目录被删除
 git worktree prune
 
-# Force remove worktree
+# 强制移除工作树
 git worktree remove --force ../epic-{name}
 ```
 
-### Check Worktree Status
+### 检查工作树状态
 ```bash
-# From main repo
+# 从主仓库
 cd ../epic-{name} && git status && cd -
 ```
 
-## Best Practices
+## 最佳实践
 
-1. **One worktree per epic** - Not per issue
-2. **Clean before create** - Always start from updated main
-3. **Commit frequently** - Small commits are easier to merge
-4. **Delete after merge** - Don't leave stale worktrees
-5. **Use descriptive branches** - `epic/feature-name` not `feature`
+1. **每个史诗一个工作树** - 不是每个问题
+2. **创建前清理** - 始终从更新的 main 开始
+3. **频繁提交** - 小提交更容易合并
+4. **合并后删除** - 不要留下过期的工作树
+5. **使用描述性分支** - `epic/feature-name` 而不是 `feature`
 
-## Common Issues
+## 常见问题
 
-### Worktree Already Exists
+### 工作树已存在
 ```bash
-# Remove old worktree first
+# 先移除旧工作树
 git worktree remove ../epic-{name}
-# Then create new one
+# 然后创建新的
 ```
 
-### Branch Already Exists
+### 分支已存在
 ```bash
-# Delete old branch
+# 删除旧分支
 git branch -D epic/{name}
-# Or use existing branch
+# 或使用现有分支
 git worktree add ../epic-{name} epic/{name}
 ```
 
-### Cannot Remove Worktree
+### 无法移除工作树
 ```bash
-# Force removal
+# 强制移除
 git worktree remove --force ../epic-{name}
-# Clean up references
+# 清理引用
 git worktree prune
 ```

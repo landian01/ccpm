@@ -1,118 +1,118 @@
-# DateTime Rule
+# 日期时间规则
 
-## Getting Current Date and Time
+## 获取当前日期和时间
 
-When any command requires the current date/time (for frontmatter, timestamps, or logs), you MUST obtain the REAL current date/time from the system rather than estimating or using placeholder values.
+当任何命令需要当前日期/时间（用于前置元数据、时间戳或日志）时，您必须从系统获取真实的当前日期/时间，而不是估算或使用占位符值。
 
-### How to Get Current DateTime
+### 如何获取当前日期时间
 
-Use the `date` command to get the current ISO 8601 formatted datetime:
+使用 `date` 命令获取当前 ISO 8601 格式的日期时间：
 
 ```bash
-# Get current datetime in ISO 8601 format (works on Linux/Mac)
+# 获取 ISO 8601 格式的当前日期时间（适用于 Linux/Mac）
 date -u +"%Y-%m-%dT%H:%M:%SZ"
 
-# Alternative for systems that support it
+# 支持此命令的系统的替代方法
 date --iso-8601=seconds
 
-# For Windows (if using PowerShell)
+# Windows 系统（如果使用 PowerShell）
 Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ"
 ```
 
-### Required Format
+### 必需格式
 
-All dates in frontmatter MUST use ISO 8601 format with UTC timezone:
-- Format: `YYYY-MM-DDTHH:MM:SSZ`
-- Example: `2024-01-15T14:30:45Z`
+前置元数据中的所有日期必须使用 ISO 8601 格式和 UTC 时区：
+- 格式：`YYYY-MM-DDTHH:MM:SSZ`
+- 示例：`2024-01-15T14:30:45Z`
 
-### Usage in Frontmatter
+### 在前置元数据中的使用
 
-When creating or updating frontmatter in any file (PRD, Epic, Task, Progress), always use the real current datetime:
+在任何文件（PRD、史诗、任务、进度）中创建或更新前置元数据时，始终使用真实的当前日期时间：
 
 ```yaml
 ---
 name: feature-name
-created: 2024-01-15T14:30:45Z  # Use actual output from date command
-updated: 2024-01-15T14:30:45Z  # Use actual output from date command
+created: 2024-01-15T14:30:45Z  # 使用 date 命令的实际输出
+updated: 2024-01-15T14:30:45Z  # 使用 date 命令的实际输出
 ---
 ```
 
-### Implementation Instructions
+### 实施说明
 
-1. **Before writing any file with frontmatter:**
-   - Run: `date -u +"%Y-%m-%dT%H:%M:%SZ"`
-   - Store the output
-   - Use this exact value in the frontmatter
+1. **在编写任何带前置元数据的文件之前：**
+   - 运行：`date -u +"%Y-%m-%dT%H:%M:%SZ"`
+   - 存储输出
+   - 在前置元数据中使用这个确切的值
 
-2. **For commands that create files:**
-   - PRD creation: Use real date for `created` field
-   - Epic creation: Use real date for `created` field
-   - Task creation: Use real date for both `created` and `updated` fields
-   - Progress tracking: Use real date for `started` and `last_sync` fields
+2. **对于创建文件的命令：**
+   - PRD 创建：为 `created` 字段使用真实日期
+   - 史诗创建：为 `created` 字段使用真实日期
+   - 任务创建：为 `created` 和 `updated` 字段使用真实日期
+   - 进度跟踪：为 `started` 和 `last_sync` 字段使用真实日期
 
-3. **For commands that update files:**
-   - Always update the `updated` field with current real datetime
-   - Preserve the original `created` field
-   - For sync operations, update `last_sync` with real datetime
+3. **对于更新文件的命令：**
+   - 始终用当前真实日期时间更新 `updated` 字段
+   - 保留原始的 `created` 字段
+   - 对于同步操作，用真实日期时间更新 `last_sync`
 
-### Examples
+### 示例
 
-**Creating a new PRD:**
+**创建新的 PRD：**
 ```bash
-# First, get current datetime
+# 首先，获取当前日期时间
 CURRENT_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-# Output: 2024-01-15T14:30:45Z
+# 输出：2024-01-15T14:30:45Z
 
-# Then use in frontmatter:
+# 然后在前置元数据中使用：
 ---
 name: user-authentication
-description: User authentication and authorization system
+description: 用户身份验证和授权系统
 status: backlog
-created: 2024-01-15T14:30:45Z  # Use the actual $CURRENT_DATE value
+created: 2024-01-15T14:30:45Z  # 使用实际的 $CURRENT_DATE 值
 ---
 ```
 
-**Updating an existing task:**
+**更新现有任务：**
 ```bash
-# Get current datetime for update
+# 获取更新用的当前日期时间
 UPDATE_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-# Update only the 'updated' field:
+# 仅更新 'updated' 字段：
 ---
 name: implement-login-api
 status: in-progress
-created: 2024-01-10T09:15:30Z  # Keep original
-updated: 2024-01-15T14:30:45Z  # Use new $UPDATE_DATE value
+created: 2024-01-10T09:15:30Z  # 保持原始值
+updated: 2024-01-15T14:30:45Z  # 使用新的 $UPDATE_DATE 值
 ---
 ```
 
-### Important Notes
+### 重要说明
 
-- **Never use placeholder dates** like `[Current ISO date/time]` or `YYYY-MM-DD`
-- **Never estimate dates** - always get the actual system time
-- **Always use UTC** (the `Z` suffix) for consistency across timezones
-- **Preserve timezone consistency** - all dates in the system use UTC
+- **永远不要使用占位符日期**，如 `[Current ISO date/time]` 或 `YYYY-MM-DD`
+- **永远不要估算日期** - 始终获取实际的系统时间
+- **始终使用 UTC**（`Z` 后缀）以保持跨时区的一致性
+- **保持时区一致性** - 系统中的所有日期都使用 UTC
 
-### Cross-Platform Compatibility
+### 跨平台兼容性
 
-If you need to ensure compatibility across different systems:
+如果需要确保跨不同系统的兼容性：
 
 ```bash
-# Try primary method first
+# 首先尝试主要方法
 date -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || \
-# Fallback for systems without -u flag
+# 没有 -u 标志的系统的备用方法
 date +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || \
-# Last resort: use Python if available
+# 最后的手段：如果可用则使用 Python
 python3 -c "from datetime import datetime; print(datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'))" 2>/dev/null || \
 python -c "from datetime import datetime; print(datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'))" 2>/dev/null
 ```
 
-## Rule Priority
+## 规则优先级
 
-This rule has **HIGHEST PRIORITY** and must be followed by all commands that:
-- Create new files with frontmatter
-- Update existing files with frontmatter
-- Track timestamps or progress
-- Log any time-based information
+此规则具有**最高优先级**，所有以下命令都必须遵循：
+- 创建带前置元数据的新文件
+- 更新带前置元数据的现有文件
+- 跟踪时间戳或进度
+- 记录任何基于时间的信息
 
-Commands affected: prd-new, prd-parse, epic-decompose, epic-sync, issue-start, issue-sync, and any other command that writes timestamps.
+受影响的命令：prd-new、prd-parse、epic-decompose、epic-sync、issue-start、issue-sync 以及任何写入时间戳的其他命令。

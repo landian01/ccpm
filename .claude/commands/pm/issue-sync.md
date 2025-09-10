@@ -2,73 +2,73 @@
 allowed-tools: Bash, Read, Write, LS
 ---
 
-# Issue Sync
+# 问题同步
 
-Push local updates as GitHub issue comments for transparent audit trail.
+将本地更新作为 GitHub 问题评论推送，实现透明的审计跟踪。
 
-## Usage
+## 用法
 ```
 /pm:issue-sync <issue_number>
 ```
 
-## Required Rules
+## 必需规则
 
-**IMPORTANT:** Before executing this command, read and follow:
-- `.claude/rules/datetime.md` - For getting real current date/time
+**重要**：执行此命令前，请阅读并遵循：
+- `.claude/rules/datetime.md` - 获取真实的当前日期/时间
 
-## Preflight Checklist
+## 飞行前检查清单
 
-Before proceeding, complete these validation steps.
-Do not bother the user with preflight checks progress ("I'm not going to ..."). Just do them and move on.
+在继续之前，完成这些验证步骤。
+不要用飞行前检查进度打扰用户（"我不会去..."）。直接执行并继续。
 
-0. **Repository Protection Check:**
-   Follow `/rules/github-operations.md` - check remote origin:
+0. **仓库保护检查：**
+   遵循 `/rules/github-operations.md` - 检查远程源：
    ```bash
    remote_url=$(git remote get-url origin 2>/dev/null || echo "")
    if [[ "$remote_url" == *"automazeio/ccpm"* ]]; then
-     echo "❌ ERROR: Cannot sync to CCPM template repository!"
-     echo "Update your remote: git remote set-url origin https://github.com/YOUR_USERNAME/YOUR_REPO.git"
+     echo "❌ 错误：无法同步到 CCPM 模板仓库！"
+     echo "更新您的远程：git remote set-url origin https://github.com/YOUR_USERNAME/YOUR_REPO.git"
      exit 1
    fi
    ```
 
-1. **GitHub Authentication:**
-   - Run: `gh auth status`
-   - If not authenticated, tell user: "❌ GitHub CLI not authenticated. Run: gh auth login"
+1. **GitHub 认证：**
+   - 运行：`gh auth status`
+   - 如果未认证，告诉用户："❌ GitHub CLI 未认证。运行：gh auth login"
 
-2. **Issue Validation:**
-   - Run: `gh issue view $ARGUMENTS --json state`
-   - If issue doesn't exist, tell user: "❌ Issue #$ARGUMENTS not found"
-   - If issue is closed and completion < 100%, warn: "⚠️ Issue is closed but work incomplete"
+2. **问题验证：**
+   - 运行：`gh issue view $ARGUMENTS --json state`
+   - 如果问题不存在，告诉用户："❌ 问题 #$ARGUMENTS 未找到"
+   - 如果问题已关闭但完成度 < 100%，警告："⚠️ 问题已关闭但工作未完成"
 
-3. **Local Updates Check:**
-   - Check if `.claude/epics/*/updates/$ARGUMENTS/` directory exists
-   - If not found, tell user: "❌ No local updates found for issue #$ARGUMENTS. Run: /pm:issue-start $ARGUMENTS"
-   - Check if progress.md exists
-   - If not, tell user: "❌ No progress tracking found. Initialize with: /pm:issue-start $ARGUMENTS"
+3. **本地更新检查：**
+   - 检查 `.claude/epics/*/updates/$ARGUMENTS/` 目录是否存在
+   - 如果未找到，告诉用户："❌ 问题 #$ARGUMENTS 没有本地更新。运行：/pm:issue-start $ARGUMENTS"
+   - 检查 progress.md 是否存在
+   - 如果不存在，告诉用户："❌ 未找到进度跟踪。使用初始化：/pm:issue-start $ARGUMENTS"
 
-4. **Check Last Sync:**
-   - Read `last_sync` from progress.md frontmatter
-   - If synced recently (< 5 minutes), ask: "⚠️ Recently synced. Force sync anyway? (yes/no)"
-   - Calculate what's new since last sync
+4. **检查上次同步：**
+   - 从 progress.md 前置元数据读取 `last_sync`
+   - 如果最近同步过（< 5 分钟），询问："⚠️ 最近已同步。仍要强制同步吗？（yes/no）"
+   - 计算自上次同步以来的新内容
 
-5. **Verify Changes:**
-   - Check if there are actual updates to sync
-   - If no changes, tell user: "ℹ️ No new updates to sync since {last_sync}"
-   - Exit gracefully if nothing to sync
+5. **验证更改：**
+   - 检查是否有实际更新要同步
+   - 如果没有更改，告诉用户："ℹ️ 自 {last_sync} 以来没有新更新要同步"
+   - 如果没有内容要同步则优雅退出
 
-## Instructions
+## 指令
 
-You are synchronizing local development progress to GitHub as issue comments for: **Issue #$ARGUMENTS**
+您正在将本地开发进度同步到 GitHub 作为问题评论：**问题 #$ARGUMENTS**
 
-### 1. Gather Local Updates
-Collect all local updates for the issue:
-- Read from `.claude/epics/{epic_name}/updates/$ARGUMENTS/`
-- Check for new content in:
-  - `progress.md` - Development progress
-  - `notes.md` - Technical notes and decisions
-  - `commits.md` - Recent commits and changes
-  - Any other update files
+### 1. 收集本地更新
+收集问题的所有本地更新：
+- 从 `.claude/epics/{epic_name}/updates/$ARGUMENTS/` 读取
+- 检查以下文件中的新内容：
+  - `progress.md` - 开发进度
+  - `notes.md` - 技术说明和决策
+  - `commits.md` - 最近的提交和更改
+  - 任何其他更新文件
 
 ### 2. Update Progress Tracking Frontmatter
 Get current datetime: `date -u +"%Y-%m-%dT%H:%M:%SZ"`

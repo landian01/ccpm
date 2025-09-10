@@ -2,69 +2,69 @@
 allowed-tools: Bash, Read, Write, LS
 ---
 
-# Issue Reopen
+# 问题重新打开
 
-Reopen a closed issue.
+重新打开已关闭的问题。
 
-## Usage
+## 用法
 ```
 /pm:issue-reopen <issue_number> [reason]
 ```
 
-## Instructions
+## 指令
 
-### 1. Find Local Task File
+### 1. 查找本地任务文件
 
-Search for task file with `github:.*issues/$ARGUMENTS` in frontmatter.
-If not found: "❌ No local task for issue #$ARGUMENTS"
+在 frontmatter 中搜索包含 `github:.*issues/$ARGUMENTS` 的任务文件。
+如果未找到："❌ 问题 #$ARGUMENTS 没有本地任务"
 
-### 2. Update Local Status
+### 2. 更新本地状态
 
-Get current datetime: `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+获取当前日期时间：`date -u +"%Y-%m-%dT%H:%M:%SZ"`
 
-Update task file frontmatter:
+更新任务文件 frontmatter：
 ```yaml
 status: open
 updated: {current_datetime}
 ```
 
-### 3. Reset Progress
+### 3. 重置进度
 
-If progress file exists:
-- Keep original started date
-- Reset completion to previous value or 0%
-- Add note about reopening with reason
+如果进度文件存在：
+- 保留原始的开始日期
+- 将完成度重置为之前的值或 0%
+- 添加关于重新打开的原因说明
 
-### 4. Reopen on GitHub
+### 4. 在 GitHub 上重新打开
 
 ```bash
-# Reopen with comment
-echo "🔄 Reopening issue
+# 使用评论重新打开
+echo "🔄 重新打开问题
 
-Reason: $ARGUMENTS
+原因：$ARGUMENTS
 
 ---
-Reopened at: {timestamp}" | gh issue comment $ARGUMENTS --body-file -
+重新打开时间：{timestamp}" | gh issue comment $ARGUMENTS --body-file -
 
-# Reopen the issue
+# 重新打开问题
 gh issue reopen $ARGUMENTS
 ```
 
-### 5. Update Epic Progress
+### 5. 更新史诗进度
 
-Recalculate epic progress with this task now open again.
+重新计算史诗进度，现在这个任务再次打开。
 
-### 6. Output
+### 6. 输出
 
 ```
-🔄 Reopened issue #$ARGUMENTS
-  Reason: {reason_if_provided}
-  Epic progress: {updated_progress}%
-  
-Start work with: /pm:issue-start $ARGUMENTS
+🔄 已重新打开问题 #$ARGUMENTS
+  原因：{reason_if_provided}
+  史诗进度：{updated_progress}%
+
+使用以下命令开始工作：/pm:issue-start $ARGUMENTS
 ```
 
-## Important Notes
+## 重要说明
 
-Preserve work history in progress files.
-Don't delete previous progress, just reset status.
+在进度文件中保留工作历史。
+不要删除之前的进度，只是重置状态。

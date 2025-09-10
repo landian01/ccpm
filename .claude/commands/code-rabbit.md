@@ -2,119 +2,119 @@
 allowed-tools: Task, Read, Edit, MultiEdit, Write, LS, Grep
 ---
 
-# CodeRabbit Review Handler
+# CodeRabbit 审核处理器
 
-Process CodeRabbit review comments with context-aware discretion.
+以具有上下文感知的审慎态度处理 CodeRabbit 审核评论。
 
-## Usage
+## 用法
 ```
 /code-rabbit
 ```
 
-Then paste one or more CodeRabbit comments.
+然后粘贴一个或多个 CodeRabbit 评论。
 
-## Instructions
+## 指令
 
-### 1. Initial Context
+### 1. 初始上下文
 
-Inform the user:
+告知用户：
 ```
-I'll review the CodeRabbit comments with discretion, as CodeRabbit doesn't have access to the entire codebase and may not understand the full context.
+我将以审慎的态度审查 CodeRabbit 评论，因为 CodeRabbit 无法访问整个代码库，可能无法理解完整的上下文。
 
-For each comment, I'll:
-- Evaluate if it's valid given our codebase context
-- Accept suggestions that improve code quality
-- Ignore suggestions that don't apply to our architecture
-- Explain my reasoning for accept/ignore decisions
+对于每个评论，我将：
+- 根据我们的代码库上下文评估其有效性
+- 接受能提高代码质量的建议
+- 忽略不适用于我们架构的建议
+- 解释我接受/忽略决策的理由
 ```
 
-### 2. Process Comments
+### 2. 处理评论
 
-#### Single File Comments
-If all comments relate to one file:
-- Read the file for context
-- Evaluate each suggestion
-- Apply accepted changes in batch using MultiEdit
-- Report which suggestions were accepted/ignored and why
+#### 单文件评论
+如果所有评论都涉及一个文件：
+- 读取文件以了解上下文
+- 评估每个建议
+- 使用 MultiEdit 批量应用接受的更改
+- 报告哪些建议被接受/忽略以及原因
 
-#### Multiple File Comments
-If comments span multiple files:
+#### 多文件评论
+如果评论涉及多个文件：
 
-Launch parallel sub-agents using Task tool:
+使用 Task 工具启动并行子代理：
 ```yaml
 Task:
-  description: "CodeRabbit fixes for {filename}"
+  description: "CodeRabbit 修复 - {filename}"
   subagent_type: "general-purpose"
   prompt: |
-    Review and apply CodeRabbit suggestions for {filename}.
+    审查并应用 {filename} 的 CodeRabbit 建议。
     
-    Comments to evaluate:
+    要评估的评论：
     {relevant_comments_for_this_file}
     
-    Instructions:
-    1. Read the file to understand context
-    2. For each suggestion:
-       - Evaluate validity given codebase patterns
-       - Accept if it improves quality/correctness
-       - Ignore if not applicable
-    3. Apply accepted changes using Edit/MultiEdit
-    4. Return summary:
-       - Accepted: {list with reasons}
-       - Ignored: {list with reasons}
-       - Changes made: {brief description}
+    指令：
+    1. 读取文件以了解上下文
+    2. 对于每个建议：
+       - 根据代码库模式评估其有效性
+       - 如果能提高质量/正确性则接受
+       - 如果不适用则忽略
+    3. 使用 Edit/MultiEdit 应用接受的更改
+    4. 返回摘要：
+       - 已接受：{附带理由的列表}
+       - 已忽略：{附带理由的列表}
+       - 已进行的更改：{简要描述}
     
-    Use discretion - CodeRabbit lacks full context.
+    使用审慎态度 - CodeRabbit 缺乏完整的上下文。
 ```
 
-### 3. Consolidate Results
+### 3. 整合结果
 
-After all sub-agents complete:
+所有子代理完成后：
 ```
-📋 CodeRabbit Review Summary
+📋 CodeRabbit 审核摘要
 
-Files Processed: {count}
+已处理文件：{count}
 
-Accepted Suggestions:
-  {file}: {changes_made}
+已接受建议：
+  {file}：{已进行的更改}
   
-Ignored Suggestions:
-  {file}: {reason_ignored}
+已忽略建议：
+  {file}：{忽略原因}
 
-Overall: {X}/{Y} suggestions applied
+总计：{X}/{Y} 个建议已应用
 ```
 
-### 4. Common Patterns to Ignore
+### 4. 常见忽略模式
 
-- **Style preferences** that conflict with project conventions
-- **Generic best practices** that don't apply to our specific use case
-- **Performance optimizations** for code that isn't performance-critical
-- **Accessibility suggestions** for internal tools
-- **Security warnings** for already-validated patterns
-- **Import reorganization** that would break our structure
+- 与项目约定冲突的**风格偏好**
+- 不适用于我们特定用例的**通用最佳实践**
+- 对非性能关键代码的**性能优化**
+- 内部工具的**可访问性建议**
+- 已验证模式的**安全警告**
+- 会破坏我们结构的**导入重组**
 
-### 5. Common Patterns to Accept
+### 5. 常见接受模式
 
-- **Actual bugs** (null checks, error handling)
-- **Security vulnerabilities** (unless false positive)
-- **Resource leaks** (unclosed connections, memory leaks)
-- **Type safety issues** (TypeScript/type hints)
-- **Logic errors** (off-by-one, incorrect conditions)
-- **Missing error handling** 
+- **实际错误**（空值检查、错误处理）
+- **安全漏洞**（除非是误报）
+- **资源泄漏**（未关闭的连接、内存泄漏）
+- **类型安全问题**（TypeScript/类型提示）
+- **逻辑错误**（差一错误、错误条件）
+- **缺失的错误处理** 
 
-## Decision Framework
+## 决策框架
 
-For each suggestion, consider:
-1. **Is it correct?** - Does the issue actually exist?
-2. **Is it relevant?** - Does it apply to our use case?
-3. **Is it beneficial?** - Will fixing it improve the code?
-4. **Is it safe?** - Could the change introduce problems?
+对于每个建议，请考虑：
+1. **它是否正确？** - 这个问题是否真的存在？
+2. **它是否相关？** - 它是否适用于我们的用例？
+3. **它是否有益？** - 修复它会改善代码吗？
+4. **它是否安全？** - 这个更改会引入问题吗？
 
-Only apply if all answers are "yes" or the benefit clearly outweighs risks.
+只有当所有答案都是"是"，或者收益明显大于风险时才应用。
 
-## Important Notes
+## 重要说明
 
-- CodeRabbit is helpful but lacks context
-- Trust your understanding of the codebase over generic suggestions
-- Explain decisions briefly to maintain audit trail
-- Batch related changes for efficiency
-- Use parallel agents for multi-file reviews to save time
+- CodeRabbit 很有帮助但缺乏上下文
+- 相信你对代码库的理解而不是通用建议
+- 简要解释决策以保持审计跟踪
+- 批量处理相关更改以提高效率
+- 使用并行代理进行多文件审查以节省时间

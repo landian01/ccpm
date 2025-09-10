@@ -2,219 +2,219 @@
 allowed-tools: Bash, Read, Write, LS
 ---
 
-# Update Context
+# 更新上下文
 
-This command updates the project context documentation in `.claude/context/` to reflect the current state of the project. Run this at the end of each development session to keep context accurate.
+此命令更新 `.claude/context/` 中的项目上下文文档，以反映项目的当前状态。在每次开发会话结束时运行此命令以保持上下文准确。
 
-## Required Rules
+## 必要规则
 
-**IMPORTANT:** Before executing this command, read and follow:
-- `.claude/rules/datetime.md` - For getting real current date/time
+**重要：** 执行此命令前，请阅读并遵循：
+- `.claude/rules/datetime.md` - 用于获取真实的当前日期/时间
 
-## Preflight Checklist
+## 预检清单
 
-Before proceeding, complete these validation steps.
-Do not bother the user with preflight checks progress ("I'm not going to ..."). Just do them and move on.
+在继续之前，请完成这些验证步骤。
+不要用预检进度来打扰用户（"我不会..."）。只需执行它们并继续。
 
-### 1. Context Validation
-- Run: `ls -la .claude/context/ 2>/dev/null`
-- If directory doesn't exist or is empty:
-  - Tell user: "❌ No context to update. Please run /context:create first."
-  - Exit gracefully
-- Count existing files: `ls -1 .claude/context/*.md 2>/dev/null | wc -l`
-- Report: "📁 Found {count} context files to check for updates"
+### 1. 上下文验证
+- 运行：`ls -la .claude/context/ 2>/dev/null`
+- 如果目录不存在或为空：
+  - 告诉用户："❌ 没有上下文可更新。请先运行 /context:create"
+  - 优雅退出
+- 统计现有文件：`ls -1 .claude/context/*.md 2>/dev/null | wc -l`
+- 报告："📁 发现 {count} 个上下文文件需要检查更新"
 
-### 2. Change Detection
+### 2. 变更检测
 
-Gather information about what has changed:
+收集已变更的信息：
 
-**Git Changes:**
-- Run: `git status --short` to see uncommitted changes
-- Run: `git log --oneline -10` to see recent commits
-- Run: `git diff --stat HEAD~5..HEAD 2>/dev/null` to see files changed recently
+**Git 变更：**
+- 运行：`git status --short` 查看未提交的变更
+- 运行：`git log --oneline -10` 查看最近的提交
+- 运行：`git diff --stat HEAD~5..HEAD 2>/dev/null` 查看最近变更的文件
 
-**File Modifications:**
-- Check context file ages: `find .claude/context -name "*.md" -type f -exec ls -lt {} + | head -5`
-- Note which context files are oldest and may need updates
+**文件修改：**
+- 检查上下文文件年龄：`find .claude/context -name "*.md" -type f -exec ls -lt {} + | head -5`
+- 记录哪些上下文文件最旧，可能需要更新
 
-**Dependency Changes:**
-- Node.js: `git diff HEAD~5..HEAD package.json 2>/dev/null`
-- Python: `git diff HEAD~5..HEAD requirements.txt 2>/dev/null`
-- Check if new dependencies were added or versions changed
+**依赖变更：**
+- Node.js：`git diff HEAD~5..HEAD package.json 2>/dev/null`
+- Python：`git diff HEAD~5..HEAD requirements.txt 2>/dev/null`
+- 检查是否添加了新依赖或版本发生了变化
 
-### 3. Get Current DateTime
-- Run: `date -u +"%Y-%m-%dT%H:%M:%SZ"`
-- Store for updating `last_updated` field in modified files
+### 3. 获取当前日期时间
+- 运行：`date -u +"%Y-%m-%dT%H:%M:%SZ"`
+- 存储用于更新已修改文件中的 `last_updated` 字段
 
-## Instructions
+## 指令
 
-### 1. Systematic Change Analysis
+### 1. 系统性变更分析
 
-For each context file, determine if updates are needed:
+为每个上下文文件确定是否需要更新：
 
-**Check each file systematically:**
-#### `progress.md` - **Always Update**
-  - Check: Recent commits, current branch, uncommitted changes
-  - Update: Latest completed work, current blockers, next steps
-  - Run: `git log --oneline -5` to get recent commit messages
-  - Include completion percentages if applicable
+**系统性地检查每个文件：**
+#### `progress.md` - **始终更新**
+  - 检查：最近的提交、当前分支、未提交的变更
+  - 更新：最新的已完成工作、当前的阻塞点、下一步骤
+  - 运行：`git log --oneline -5` 获取最近的提交消息
+  - 如果适用，包含完成百分比
 
-#### `project-structure.md` - **Update if Changed**
-  - Check: `git diff --name-status HEAD~10..HEAD | grep -E '^A'` for new files
-  - Update: New directories, moved files, structural reorganization
-  - Only update if significant structural changes occurred
+#### `project-structure.md` - **变更时更新**
+  - 检查：`git diff --name-status HEAD~10..HEAD | grep -E '^A'` 查看新文件
+  - 更新：新目录、移动的文件、结构重组
+  - 仅在发生重大结构变更时更新
 
-#### `tech-context.md` - **Update if Dependencies Changed**
-  - Check: Package files for new dependencies or version changes
-  - Update: New libraries, upgraded versions, new dev tools
-  - Include security updates or breaking changes
+#### `tech-context.md` - **依赖变更时更新**
+  - 检查：包文件中的新依赖或版本变更
+  - 更新：新库、升级版本、新开发工具
+  - 包含安全更新或破坏性变更
 
-#### `system-patterns.md` - **Update if Architecture Changed**
-  - Check: New design patterns, architectural decisions
-  - Update: New patterns adopted, refactoring done
-  - Only update for significant architectural changes
+#### `system-patterns.md` - **架构变更时更新**
+  - 检查：新的设计模式、架构决策
+  - 更新：采用的新模式、完成的代码重构
+  - 仅在发生重大架构变更时更新
 
-#### `product-context.md` - **Update if Requirements Changed**
-  - Check: New features implemented, user feedback incorporated
-  - Update: New user stories, changed requirements
-  - Include any pivot in product direction
+#### `product-context.md` - **需求变更时更新**
+  - 检查：实现的新功能、纳入的用户反馈
+  - 更新：新的用户故事、变更的需求
+  - 包含产品方向的任何转向
 
-#### `project-brief.md` - **Rarely Update**
-  - Check: Only if fundamental project goals changed
-  - Update: Major scope changes, new objectives
-  - Usually remains stable
+#### `project-brief.md` - **很少更新**
+  - 检查：仅在项目基本目标发生变化时
+  - 更新：主要范围变更、新目标
+  - 通常保持稳定
 
-#### `project-overview.md` - **Update for Major Milestones**
-  - Check: Major features completed, significant progress
-  - Update: Feature status, capability changes
-  - Update when reaching project milestones
+#### `project-overview.md` - **重大里程碑时更新**
+  - 检查：完成的主要功能、重大进展
+  - 更新：功能状态、能力变更
+  - 在达到项目里程碑时更新
 
-#### `project-vision.md` - **Rarely Update**
-  - Check: Strategic direction changes
-  - Update: Only for major vision shifts
-  - Usually remains stable
+#### `project-vision.md` - **很少更新**
+  - 检查：战略方向变更
+  - 更新：仅在重大愿景转变时
+  - 通常保持稳定
 
-#### `project-style-guide.md` - **Update if Conventions Changed**
-  - Check: New linting rules, style decisions
-  - Update: Convention changes, new patterns adopted
-  - Include examples of new patterns
-### 2. Smart Update Strategy
+#### `project-style-guide.md` - **约定变更时更新**
+  - 检查：新的代码检查规则、风格决策
+  - 更新：约定变更、采用的新模式
+  - 包含新模式的示例
+### 2. 智能更新策略
 
-**For each file that needs updating:**
+**对于每个需要更新的文件：**
 
-1. **Read existing file** to understand current content
-2. **Identify specific sections** that need updates
-3. **Preserve frontmatter** but update `last_updated` field:
+1. **读取现有文件** 以了解当前内容
+2. **识别需要更新的特定部分**
+3. **保留 frontmatter** 但更新 `last_updated` 字段：
    ```yaml
    ---
-   created: [preserve original]
-   last_updated: [Use REAL datetime from date command]
-   version: [increment if major update, e.g., 1.0 → 1.1]
+   created: [保留原值]
+   last_updated: [使用日期命令的真实日期时间]
+   version: [主要更新时递增，例如 1.0 → 1.1]
    author: Claude Code PM System
    ---
    ```
-4. **Make targeted updates** - don't rewrite entire file
-5. **Add update notes** at the bottom if significant:
+4. **进行针对性更新** - 不要重写整个文件
+5. **如果重大变更，在底部添加更新说明**：
    ```markdown
-   ## Update History
-   - {date}: {summary of what changed}
+   ## 更新历史
+   - {日期}: {变更摘要}
    ```
 
-### 3. Update Validation
+### 3. 更新验证
 
-After updating each file:
-- Verify file still has valid frontmatter
-- Check file size is reasonable (not corrupted)
-- Ensure markdown formatting is preserved
-- Confirm updates accurately reflect changes
+更新每个文件后：
+- 验证文件仍具有有效的 frontmatter
+- 检查文件大小合理（未损坏）
+- 确保 markdown 格式保持完整
+- 确认更新准确反映了变更
 
-### 4. Skip Optimization
+### 4. 跳过优化
 
-**Skip files that don't need updates:**
-- If no relevant changes detected, skip the file
-- Report skipped files in summary
-- Don't update timestamp if content unchanged
-- This preserves accurate "last modified" information
+**跳过不需要更新的文件：**
+- 如果未检测到相关变更，跳过该文件
+- 在摘要中报告跳过的文件
+- 如果内容未变更，不要更新时间戳
+- 这可以保留准确的"最后修改"信息
 
-### 5. Error Handling
+### 5. 错误处理
 
-**Common Issues:**
-- **File locked:** "❌ Cannot update {file} - may be open in editor"
-- **Permission denied:** "❌ Cannot write to {file} - check permissions"
-- **Corrupted file:** "⚠️ {file} appears corrupted - skipping update"
-- **Disk space:** "❌ Insufficient disk space for updates"
+**常见问题：**
+- **文件锁定：** "❌ 无法更新 {file} - 可能在编辑器中打开"
+- **权限被拒：** "❌ 无法写入 {file} - 检查权限"
+- **文件损坏：** "⚠️ {file} 似乎已损坏 - 跳过更新"
+- **磁盘空间：** "❌ 磁盘空间不足，无法更新"
 
-If update fails:
-- Report which files were successfully updated
-- Note which files failed and why
-- Preserve original files (don't leave corrupted state)
+如果更新失败：
+- 报告哪些文件成功更新
+- 记录哪些文件失败及原因
+- 保留原始文件（不要留下损坏状态）
 
-### 6. Update Summary
+### 6. 更新摘要
 
-Provide detailed summary of updates:
+提供详细的更新摘要：
 
 ```
-🔄 Context Update Complete
+🔄 上下文更新完成
 
-📊 Update Statistics:
-  - Files Scanned: {total_count}
-  - Files Updated: {updated_count}
-  - Files Skipped: {skipped_count} (no changes needed)
-  - Errors: {error_count}
+📊 更新统计：
+  - 扫描文件数：{total_count}
+  - 已更新文件数：{updated_count}
+  - 跳过文件数：{skipped_count}（无需变更）
+  - 错误数：{error_count}
 
-📝 Updated Files:
-  ✅ progress.md - Updated recent commits, current status
-  ✅ tech-context.md - Added 3 new dependencies
-  ✅ project-structure.md - Noted new /utils directory
+📝 已更新文件：
+  ✅ progress.md - 更新了最近的提交、当前状态
+  ✅ tech-context.md - 添加了 3 个新依赖
+  ✅ project-structure.md - 记录了新的 /utils 目录
 
-⏭️ Skipped Files (no changes):
-  - project-brief.md (last updated: 5 days ago)
-  - project-vision.md (last updated: 2 weeks ago)
-  - system-patterns.md (last updated: 3 days ago)
+⏭️ 跳过文件（无变更）：
+  - project-brief.md（最后更新：5 天前）
+  - project-vision.md（最后更新：2 周前）
+  - system-patterns.md（最后更新：3 天前）
 
-⚠️ Issues:
-  {any warnings or errors}
+⚠️ 问题：
+  {任何警告或错误}
 
-⏰ Last Update: {timestamp}
-🔄 Next: Run this command regularly to keep context current
-💡 Tip: Major changes? Consider running /context:create for full refresh
+⏰ 最后更新：{timestamp}
+🔄 下一步：定期运行此命令以保持上下文最新
+💡 提示：重大变更？考虑运行 /context:create 进行完整刷新
 ```
 
-### 7. Incremental Update Tracking
+### 7. 增量更新跟踪
 
-**Track what was updated:**
-- Note which sections of each file were modified
-- Keep changes focused and surgical
-- Don't regenerate unchanged content
-- Preserve formatting and structure
+**跟踪已更新的内容：**
+- 记录每个文件中修改了哪些部分
+- 保持变更集中且精准
+- 不要重新生成未变更的内容
+- 保留格式和结构
 
-### 8. Performance Optimization
+### 8. 性能优化
 
-For large projects:
-- Process files in parallel when possible
-- Show progress: "Updating context files... {current}/{total}"
-- Skip very large files with warning
-- Use git diff to quickly identify changed areas
+对于大型项目：
+- 尽可能并行处理文件
+- 显示进度："正在更新上下文文件... {current}/{total}"
+- 跳过超大文件并发出警告
+- 使用 git diff 快速识别变更区域
 
-## Context Gathering Commands
+## 上下文收集命令
 
-Use these commands to detect changes:
-- Context directory: `.claude/context/`
-- Current git status: `git status --short`
-- Recent commits: `git log --oneline -10`
-- Changed files: `git diff --name-only HEAD~5..HEAD 2>/dev/null`
-- Branch info: `git branch --show-current`
-- Uncommitted changes: `git diff --stat`
-- New untracked files: `git ls-files --others --exclude-standard | head -10`
-- Dependency changes: Check package.json, requirements.txt, etc.
+使用这些命令检测变更：
+- 上下文目录：`.claude/context/`
+- 当前 git 状态：`git status --short`
+- 最近提交：`git log --oneline -10`
+- 变更文件：`git diff --name-only HEAD~5..HEAD 2>/dev/null`
+- 分支信息：`git branch --show-current`
+- 未提交变更：`git diff --stat`
+- 新的未跟踪文件：`git ls-files --others --exclude-standard | head -10`
+- 依赖变更：检查 package.json、requirements.txt 等
 
-## Important Notes
+## 重要注意事项
 
-- **Only update files with actual changes** - preserve accurate timestamps
-- **Always use real datetime** from system clock for `last_updated`
-- **Make surgical updates** - don't regenerate entire files
-- **Validate each update** - ensure files remain valid
-- **Provide detailed summary** - show what changed and what didn't
-- **Handle errors gracefully** - don't corrupt existing context
+- **仅更新实际变更的文件** - 保留准确的时间戳
+- **始终使用真实的日期时间** 从系统时钟获取 `last_updated`
+- **进行精准更新** - 不要重新生成整个文件
+- **验证每个更新** - 确保文件保持有效
+- **提供详细摘要** - 显示变更内容和未变更内容
+- **优雅处理错误** - 不要损坏现有上下文
 
 $ARGUMENTS

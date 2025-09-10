@@ -2,229 +2,229 @@
 allowed-tools: Bash, Read, Write, LS, Task
 ---
 
-# Epic Decompose
+# 史诗分解
 
-Break epic into concrete, actionable tasks.
+将史诗分解为具体的、可操作的任务。
 
-## Usage
+## 用法
 ```
 /pm:epic-decompose <feature_name>
 ```
 
-## Required Rules
+## 必需规则
 
-**IMPORTANT:** Before executing this command, read and follow:
-- `.claude/rules/datetime.md` - For getting real current date/time
+**重要**：执行此命令前，请阅读并遵循：
+- `.claude/rules/datetime.md` - 获取真实的当前日期/时间
 
-## Preflight Checklist
+## 飞行前检查清单
 
-Before proceeding, complete these validation steps.
-Do not bother the user with preflight checks progress ("I'm not going to ..."). Just do them and move on.
+在继续之前，完成这些验证步骤。
+不要用飞行前检查进度打扰用户（"我不会去..."）。直接执行并继续。
 
-1. **Verify epic exists:**
-   - Check if `.claude/epics/$ARGUMENTS/epic.md` exists
-   - If not found, tell user: "❌ Epic not found: $ARGUMENTS. First create it with: /pm:prd-parse $ARGUMENTS"
-   - Stop execution if epic doesn't exist
+1. **验证史诗是否存在：**
+   - 检查 `.claude/epics/$ARGUMENTS/epic.md` 是否存在
+   - 如果未找到，告诉用户："❌ 未找到史诗：$ARGUMENTS。请先创建：/pm:prd-parse $ARGUMENTS"
+   - 如果史诗不存在则停止执行
 
-2. **Check for existing tasks:**
-   - Check if any numbered task files (001.md, 002.md, etc.) already exist in `.claude/epics/$ARGUMENTS/`
-   - If tasks exist, list them and ask: "⚠️ Found {count} existing tasks. Delete and recreate all tasks? (yes/no)"
-   - Only proceed with explicit 'yes' confirmation
-   - If user says no, suggest: "View existing tasks with: /pm:epic-show $ARGUMENTS"
+2. **检查现有任务：**
+   - 检查 `.claude/epics/$ARGUMENTS/` 中是否已存在任何编号的任务文件（001.md、002.md 等）
+   - 如果任务存在，列出它们并询问："⚠️ 找到 {count} 个现有任务。删除并重新创建所有任务？（yes/no）"
+   - 只有在明确确认 'yes' 时才继续
+   - 如果用户说 no，建议："使用以下命令查看现有任务：/pm:epic-show $ARGUMENTS"
 
-3. **Validate epic frontmatter:**
-   - Verify epic has valid frontmatter with: name, status, created, prd
-   - If invalid, tell user: "❌ Invalid epic frontmatter. Please check: .claude/epics/$ARGUMENTS/epic.md"
+3. **验证史诗前置元数据：**
+   - 验证史诗具有有效的前置元数据：name、status、created、prd
+   - 如果无效，告诉用户："❌ 史诗前置元数据无效。请检查：.claude/epics/$ARGUMENTS/epic.md"
 
-4. **Check epic status:**
-   - If epic status is already "completed", warn user: "⚠️ Epic is marked as completed. Are you sure you want to decompose it again?"
+4. **检查史诗状态：**
+   - 如果史诗状态已经是 "completed"，警告用户："⚠️ 史诗已标记为已完成。您确定要再次分解吗？"
 
-## Instructions
+## 指令
 
-You are decomposing an epic into specific, actionable tasks for: **$ARGUMENTS**
+您正在将史诗分解为具体的、可操作的任务：**$ARGUMENTS**
 
-### 1. Read the Epic
-- Load the epic from `.claude/epics/$ARGUMENTS/epic.md`
-- Understand the technical approach and requirements
-- Review the task breakdown preview
+### 1. 读取史诗
+- 从 `.claude/epics/$ARGUMENTS/epic.md` 加载史诗
+- 理解技术方法和需求
+- 查看任务分解预览
 
-### 2. Analyze for Parallel Creation
+### 2. 分析并行创建
 
-Determine if tasks can be created in parallel:
-- If tasks are mostly independent: Create in parallel using Task agents
-- If tasks have complex dependencies: Create sequentially
-- For best results: Group independent tasks for parallel creation
+确定任务是否可以并行创建：
+- 如果任务大多独立：使用 Task 代理并行创建
+- 如果任务有复杂依赖关系：顺序创建
+- 为获得最佳效果：分组独立任务进行并行创建
 
-### 3. Parallel Task Creation (When Possible)
+### 3. 并行任务创建（如可能）
 
-If tasks can be created in parallel, spawn sub-agents:
+如果任务可以并行创建，启动子代理：
 
 ```yaml
 Task:
-  description: "Create task files batch {X}"
+  description: "创建任务文件批次 {X}"
   subagent_type: "general-purpose"
   prompt: |
-    Create task files for epic: $ARGUMENTS
+    为史诗创建任务文件：$ARGUMENTS
 
-    Tasks to create:
-    - {list of 3-4 tasks for this batch}
+    要创建的任务：
+    - {此批次的 3-4 个任务列表}
 
-    For each task:
-    1. Create file: .claude/epics/$ARGUMENTS/{number}.md
-    2. Use exact format with frontmatter and all sections
-    3. Follow task breakdown from epic
-    4. Set parallel/depends_on fields appropriately
-    5. Number sequentially (001.md, 002.md, etc.)
+    对于每个任务：
+    1. 创建文件：.claude/epics/$ARGUMENTS/{number}.md
+    2. 使用确切格式，包含前置元数据和所有部分
+    3. 遵循史诗的任务分解
+    4. 适当设置 parallel/depends_on 字段
+    5. 顺序编号（001.md、002.md 等）
 
-    Return: List of files created
+    返回：创建的文件列表
 ```
 
-### 4. Task File Format with Frontmatter
-For each task, create a file with this exact structure:
+### 4. 带前置元数据的任务文件格式
+对于每个任务，创建具有此确切结构的文件：
 
 ```markdown
 ---
-name: [Task Title]
+name: [任务标题]
 status: open
-created: [Current ISO date/time]
-updated: [Current ISO date/time]
-github: [Will be updated when synced to GitHub]
-depends_on: []  # List of task numbers this depends on, e.g., [001, 002]
-parallel: true  # Can this run in parallel with other tasks?
-conflicts_with: []  # Tasks that modify same files, e.g., [003, 004]
+created: [当前 ISO 日期/时间]
+updated: [当前 ISO 日期/时间]
+github: [同步到 GitHub 时将更新]
+depends_on: []  # 此任务依赖的任务编号列表，例如 [001, 002]
+parallel: true  # 是否可以与其他任务并行运行？
+conflicts_with: []  # 修改相同文件的任务，例如 [003, 004]
 ---
 
-# Task: [Task Title]
+# 任务：[任务标题]
 
-## Description
-Clear, concise description of what needs to be done
+## 描述
+清晰、简洁地描述需要完成的工作
 
-## Acceptance Criteria
-- [ ] Specific criterion 1
-- [ ] Specific criterion 2
-- [ ] Specific criterion 3
+## 验收标准
+- [ ] 具体标准 1
+- [ ] 具体标准 2
+- [ ] 具体标准 3
 
-## Technical Details
-- Implementation approach
-- Key considerations
-- Code locations/files affected
+## 技术细节
+- 实施方法
+- 关键考虑因素
+- 受影响的代码位置/文件
 
-## Dependencies
-- [ ] Task/Issue dependencies
-- [ ] External dependencies
+## 依赖关系
+- [ ] 任务/问题依赖
+- [ ] 外部依赖
 
-## Effort Estimate
-- Size: XS/S/M/L/XL
-- Hours: estimated hours
-- Parallel: true/false (can run in parallel with other tasks)
+## 工作量估算
+- 规模：XS/S/M/L/XL
+- 小时数：预估小时数
+- 并行：true/false（是否可以与其他任务并行运行）
 
-## Definition of Done
-- [ ] Code implemented
-- [ ] Tests written and passing
-- [ ] Documentation updated
-- [ ] Code reviewed
-- [ ] Deployed to staging
+## 完成定义
+- [ ] 代码已实施
+- [ ] 测试已编写并通过
+- [ ] 文档已更新
+- [ ] 代码已审查
+- [ ] 已部署到测试环境
 ```
 
-### 3. Task Naming Convention
-Save tasks as: `.claude/epics/$ARGUMENTS/{task_number}.md`
-- Use sequential numbering: 001.md, 002.md, etc.
-- Keep task titles short but descriptive
+### 3. 任务命名约定
+将任务保存为：`.claude/epics/$ARGUMENTS/{task_number}.md`
+- 使用顺序编号：001.md、002.md 等
+- 保持任务标题简短但描述性强
 
-### 4. Frontmatter Guidelines
-- **name**: Use a descriptive task title (without "Task:" prefix)
-- **status**: Always start with "open" for new tasks
-- **created**: Get REAL current datetime by running: `date -u +"%Y-%m-%dT%H:%M:%SZ"`
-- **updated**: Use the same real datetime as created for new tasks
-- **github**: Leave placeholder text - will be updated during sync
-- **depends_on**: List task numbers that must complete before this can start (e.g., [001, 002])
-- **parallel**: Set to true if this can run alongside other tasks without conflicts
-- **conflicts_with**: List task numbers that modify the same files (helps coordination)
+### 4. 前置元数据指南
+- **name**：使用描述性任务标题（不带 "Task:" 前缀）
+- **status**：新任务始终以 "open" 开始
+- **created**：通过运行获取真实当前日期时间：`date -u +"%Y-%m-%dT%H:%M:%SZ"`
+- **updated**：新任务使用与 created 相同的真实日期时间
+- **github**：留空占位符文本 - 同步期间将更新
+- **depends_on**：列出必须在此任务之前完成的任务编号（例如 [001, 002]）
+- **parallel**：如果可以与其他任务无冲突地并行运行，则设置为 true
+- **conflicts_with**：列出修改相同文件的任务编号（有助于协调）
 
-### 5. Task Types to Consider
-- **Setup tasks**: Environment, dependencies, scaffolding
-- **Data tasks**: Models, schemas, migrations
-- **API tasks**: Endpoints, services, integration
-- **UI tasks**: Components, pages, styling
-- **Testing tasks**: Unit tests, integration tests
-- **Documentation tasks**: README, API docs
-- **Deployment tasks**: CI/CD, infrastructure
+### 5. 要考虑的任务类型
+- **设置任务**：环境、依赖、脚手架
+- **数据任务**：模型、架构、迁移
+- **API 任务**：端点、服务、集成
+- **UI 任务**：组件、页面、样式
+- **测试任务**：单元测试、集成测试
+- **文档任务**：README、API 文档
+- **部署任务**：CI/CD、基础设施
 
-### 6. Parallelization
-Mark tasks with `parallel: true` if they can be worked on simultaneously without conflicts.
+### 6. 并行化
+如果任务可以同时工作且无冲突，则用 `parallel: true` 标记任务。
 
-### 7. Execution Strategy
+### 7. 执行策略
 
-Choose based on task count and complexity:
+根据任务数量和复杂性选择：
 
-**Small Epic (< 5 tasks)**: Create sequentially for simplicity
+**小型史诗（< 5 个任务）**：为简单起见顺序创建
 
-**Medium Epic (5-10 tasks)**:
-- Batch into 2-3 groups
-- Spawn agents for each batch
-- Consolidate results
+**中型史诗（5-10 个任务）**：
+- 分成 2-3 组
+- 为每组启动代理
+- 整合结果
 
-**Large Epic (> 10 tasks)**:
-- Analyze dependencies first
-- Group independent tasks
-- Launch parallel agents (max 5 concurrent)
-- Create dependent tasks after prerequisites
+**大型史诗（> 10 个任务）**：
+- 首先分析依赖关系
+- 分组独立任务
+- 启动并行代理（最多 5 个并发）
+- 在先决条件后创建依赖任务
 
-Example for parallel execution:
+并行执行示例：
 ```markdown
-Spawning 3 agents for parallel task creation:
-- Agent 1: Creating tasks 001-003 (Database layer)
-- Agent 2: Creating tasks 004-006 (API layer)
-- Agent 3: Creating tasks 007-009 (UI layer)
+启动 3 个代理进行并行任务创建：
+- 代理 1：创建任务 001-003（数据库层）
+- 代理 2：创建任务 004-006（API 层）
+- 代理 3：创建任务 007-009（UI 层）
 ```
 
-### 8. Task Dependency Validation
+### 8. 任务依赖验证
 
-When creating tasks with dependencies:
-- Ensure referenced dependencies exist (e.g., if Task 003 depends on Task 002, verify 002 was created)
-- Check for circular dependencies (Task A → Task B → Task A)
-- If dependency issues found, warn but continue: "⚠️ Task dependency warning: {details}"
+创建有依赖关系的任务时：
+- 确保引用的依赖存在（例如，如果任务 003 依赖于任务 002，验证 002 已创建）
+- 检查循环依赖（任务 A → 任务 B → 任务 A）
+- 如果发现依赖问题，警告但继续："⚠️ 任务依赖警告：{details}"
 
-### 9. Update Epic with Task Summary
-After creating all tasks, update the epic file by adding this section:
+### 9. 用任务摘要更新史诗
+创建所有任务后，通过添加此部分更新史诗文件：
 ```markdown
-## Tasks Created
-- [ ] 001.md - {Task Title} (parallel: true/false)
-- [ ] 002.md - {Task Title} (parallel: true/false)
-- etc.
+## 已创建任务
+- [ ] 001.md - {任务标题}（并行：true/false）
+- [ ] 002.md - {任务标题}（并行：true/false）
+- 等等。
 
-Total tasks: {count}
-Parallel tasks: {parallel_count}
-Sequential tasks: {sequential_count}
-Estimated total effort: {sum of hours}
+总任务数：{count}
+并行任务：{parallel_count}
+顺序任务：{sequential_count}
+预估总工作量：{小时数总和}
 ```
 
-Also update the epic's frontmatter progress if needed (still 0% until tasks actually start).
+同时更新史诗的前置元数据进度（如果需要）（在任务实际开始前仍为 0%）。
 
-### 9. Quality Validation
+### 9. 质量验证
 
-Before finalizing tasks, verify:
-- [ ] All tasks have clear acceptance criteria
-- [ ] Task sizes are reasonable (1-3 days each)
-- [ ] Dependencies are logical and achievable
-- [ ] Parallel tasks don't conflict with each other
-- [ ] Combined tasks cover all epic requirements
+最终确定任务前，验证：
+- [ ] 所有任务都有清晰的验收标准
+- [ ] 任务规模合理（每个 1-3 天）
+- [ ] 依赖关系逻辑且可实现
+- [ ] 并行任务互不冲突
+- [ ] 组合任务涵盖所有史诗需求
 
-### 10. Post-Decomposition
+### 10. 分解后
 
-After successfully creating tasks:
-1. Confirm: "✅ Created {count} tasks for epic: $ARGUMENTS"
-2. Show summary:
-   - Total tasks created
-   - Parallel vs sequential breakdown
-   - Total estimated effort
-3. Suggest next step: "Ready to sync to GitHub? Run: /pm:epic-sync $ARGUMENTS"
+成功创建任务后：
+1. 确认："✅ 为史诗创建 {count} 个任务：$ARGUMENTS"
+2. 显示摘要：
+   - 创建的总任务数
+   - 并行与顺序分解
+   - 预估总工作量
+3. 建议下一步："准备好同步到 GitHub 吗？运行：/pm:epic-sync $ARGUMENTS"
 
-## Error Recovery
+## 错误恢复
 
-If any step fails:
-- If task creation partially completes, list which tasks were created
-- Provide option to clean up partial tasks
-- Never leave the epic in an inconsistent state
+如果任何步骤失败：
+- 如果任务创建部分完成，列出创建的任务
+- 提供清理部分任务的选项
+- 永远不要让史诗处于不一致状态
 
-Aim for tasks that can be completed in 1-3 days each. Break down larger tasks into smaller, manageable pieces for the "$ARGUMENTS" epic.
+目标是将任务设计为每个可以在 1-3 天内完成。将较大的任务分解为更小的、可管理的部分，用于 "$ARGUMENTS" 史诗。

@@ -3,12 +3,12 @@
 epic_name="$1"
 
 if [ -z "$epic_name" ]; then
-  echo "❌ Please provide an epic name"
-  echo "Usage: /pm:epic-show <epic-name>"
+  echo "❌ 请提供史诗名称"
+  echo "用法: /pm:epic-show <epic-name>"
   exit 1
 fi
 
-echo "Getting epic..."
+echo "正在获取史诗..."
 echo ""
 echo ""
 
@@ -16,35 +16,35 @@ epic_dir=".claude/epics/$epic_name"
 epic_file="$epic_dir/epic.md"
 
 if [ ! -f "$epic_file" ]; then
-  echo "❌ Epic not found: $epic_name"
+  echo "❌ 未找到史诗: $epic_name"
   echo ""
-  echo "Available epics:"
+  echo "可用史诗:"
   for dir in .claude/epics/*/; do
     [ -d "$dir" ] && echo "  • $(basename "$dir")"
   done
   exit 1
 fi
 
-# Display epic details
-echo "📚 Epic: $epic_name"
+# 显示史诗详情
+echo "📚 史诗: $epic_name"
 echo "================================"
 echo ""
 
-# Extract metadata
+# 提取元数据
 status=$(grep "^status:" "$epic_file" | head -1 | sed 's/^status: *//')
 progress=$(grep "^progress:" "$epic_file" | head -1 | sed 's/^progress: *//')
 github=$(grep "^github:" "$epic_file" | head -1 | sed 's/^github: *//')
 created=$(grep "^created:" "$epic_file" | head -1 | sed 's/^created: *//')
 
-echo "📊 Metadata:"
-echo "  Status: ${status:-planning}"
-echo "  Progress: ${progress:-0%}"
+echo "📊 元数据:"
+echo "  状态: ${status:-planning}"
+echo "  进度: ${progress:-0%}"
 [ -n "$github" ] && echo "  GitHub: $github"
-echo "  Created: ${created:-unknown}"
+echo "  创建时间: ${created:-unknown}"
 echo ""
 
-# Show tasks
-echo "📝 Tasks:"
+# 显示任务
+echo "📝 任务:"
 task_count=0
 open_count=0
 closed_count=0
@@ -62,7 +62,7 @@ for task_file in "$epic_dir"/[0-9]*.md; do
     ((closed_count++))
   else
     echo "  ⬜ #$task_num - $task_name"
-    [ "$parallel" = "true" ] && echo -n " (parallel)"
+    [ "$parallel" = "true" ] && echo -n " (可并行)"
     ((open_count++))
   fi
 
@@ -70,22 +70,22 @@ for task_file in "$epic_dir"/[0-9]*.md; do
 done
 
 if [ $task_count -eq 0 ]; then
-  echo "  No tasks created yet"
-  echo "  Run: /pm:epic-decompose $epic_name"
+  echo "  尚未创建任何任务"
+  echo "  运行: /pm:epic-decompose $epic_name"
 fi
 
 echo ""
-echo "📈 Statistics:"
-echo "  Total tasks: $task_count"
-echo "  Open: $open_count"
-echo "  Closed: $closed_count"
-[ $task_count -gt 0 ] && echo "  Completion: $((closed_count * 100 / task_count))%"
+echo "📈 统计信息:"
+echo "  任务总数: $task_count"
+echo "  开放: $open_count"
+echo "  已关闭: $closed_count"
+[ $task_count -gt 0 ] && echo "  完成度: $((closed_count * 100 / task_count))%"
 
-# Next actions
+# 后续操作
 echo ""
-echo "💡 Actions:"
-[ $task_count -eq 0 ] && echo "  • Decompose into tasks: /pm:epic-decompose $epic_name"
-[ -z "$github" ] && [ $task_count -gt 0 ] && echo "  • Sync to GitHub: /pm:epic-sync $epic_name"
-[ -n "$github" ] && [ "$status" != "completed" ] && echo "  • Start work: /pm:epic-start $epic_name"
+echo "💡 后续操作:"
+[ $task_count -eq 0 ] && echo "  • 分解为任务: /pm:epic-decompose $epic_name"
+[ -z "$github" ] && [ $task_count -gt 0 ] && echo "  • 同步到 GitHub: /pm:epic-sync $epic_name"
+[ -n "$github" ] && [ "$status" != "completed" ] && echo "  • 开始工作: /pm:epic-start $epic_name"
 
 exit 0

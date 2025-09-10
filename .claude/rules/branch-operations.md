@@ -1,147 +1,147 @@
-# Branch Operations
+# 分支操作
 
-Git branches enable parallel development by allowing multiple developers to work on the same repository with isolated changes.
+Git 分支通过允许多个开发者在同一仓库中使用隔离的更改进行并行开发。
 
-## Creating Branches
+## 创建分支
 
-Always create branches from a clean main branch:
+始终从干净的主分支创建分支：
 ```bash
-# Ensure main is up to date
+# 确保 main 是最新的
 git checkout main
 git pull origin main
 
-# Create branch for epic
+# 为史诗创建分支
 git checkout -b epic/{name}
 git push -u origin epic/{name}
 ```
 
-The branch will be created and pushed to origin with upstream tracking.
+分支将被创建并推送到 origin，具有上游跟踪。
 
-## Working in Branches
+## 在分支中工作
 
-### Agent Commits
-- Agents commit directly to the branch
-- Use small, focused commits
-- Commit message format: `Issue #{number}: {description}`
-- Example: `Issue #1234: Add user authentication schema`
+### 代理提交
+- 代理直接提交到分支
+- 使用小的、专注的提交
+- 提交消息格式：`Issue #{number}: {description}`
+- 示例：`Issue #1234: 添加用户身份验证模式`
 
-### File Operations
+### 文件操作
 ```bash
-# Working directory is the current directory
-# (no need to change directories like with worktrees)
+# 工作目录是当前目录
+# （不需要像工作树那样更改目录）
 
-# Normal git operations work
+# 正常的 git 操作工作
 git add {files}
 git commit -m "Issue #{number}: {change}"
 
-# View branch status
+# 查看分支状态
 git status
 git log --oneline -5
 ```
 
-## Parallel Work in Same Branch
+## 在同一分支中并行工作
 
-Multiple agents can work in the same branch if they coordinate file access:
+多个代理可以在同一分支中工作，如果它们协调文件访问：
 ```bash
-# Agent A works on API
+# 代理 A 在 API 上工作
 git add src/api/*
-git commit -m "Issue #1234: Add user endpoints"
+git commit -m "Issue #1234: 添加用户端点"
 
-# Agent B works on UI (coordinate to avoid conflicts!)
-git pull origin epic/{name}  # Get latest changes
+# 代理 B 在 UI 上工作（协调以避免冲突！）
+git pull origin epic/{name}  # 获取最新更改
 git add src/ui/*
-git commit -m "Issue #1235: Add dashboard component"
+git commit -m "Issue #1235: 添加仪表板组件"
 ```
 
-## Merging Branches
+## 合并分支
 
-When epic is complete, merge back to main:
+当史诗完成时，合并回 main：
 ```bash
-# From main repository
+# 从主仓库
 git checkout main
 git pull origin main
 
-# Merge epic branch
+# 合并史诗分支
 git merge epic/{name}
 
-# If successful, clean up
+# 如果成功，清理
 git branch -d epic/{name}
 git push origin --delete epic/{name}
 ```
 
-## Handling Conflicts
+## 处理冲突
 
-If merge conflicts occur:
+如果发生合并冲突：
 ```bash
-# Conflicts will be shown
+# 将显示冲突
 git status
 
-# Human resolves conflicts
-# Then continue merge
+# 人类解决冲突
+# 然后继续合并
 git add {resolved-files}
 git commit
 ```
 
-## Branch Management
+## 分支管理
 
-### List Active Branches
+### 列出活动分支
 ```bash
 git branch -a
 ```
 
-### Remove Stale Branch
+### 删除过时分支
 ```bash
-# Delete local branch
+# 删除本地分支
 git branch -d epic/{name}
 
-# Delete remote branch
+# 删除远程分支
 git push origin --delete epic/{name}
 ```
 
-### Check Branch Status
+### 检查分支状态
 ```bash
-# Current branch info
+# 当前分支信息
 git branch -v
 
-# Compare with main
+# 与 main 比较
 git log --oneline main..epic/{name}
 ```
 
-## Best Practices
+## 最佳实践
 
-1. **One branch per epic** - Not per issue
-2. **Clean before create** - Always start from updated main
-3. **Commit frequently** - Small commits are easier to merge
-4. **Pull before push** - Get latest changes to avoid conflicts
-5. **Use descriptive branches** - `epic/feature-name` not `feature`
+1. **每个史诗一个分支** - 不是每个问题
+2. **创建前清理** - 始终从更新的 main 开始
+3. **频繁提交** - 小提交更容易合并
+4. **推送前拉取** - 获取最新更改以避免冲突
+5. **使用描述性分支** - `epic/feature-name` 而不是 `feature`
 
-## Common Issues
+## 常见问题
 
-### Branch Already Exists
+### 分支已存在
 ```bash
-# Delete old branch first
+# 首先删除旧分支
 git branch -D epic/{name}
 git push origin --delete epic/{name}
-# Then create new one
+# 然后创建新的
 ```
 
-### Cannot Push Branch
+### 无法推送分支
 ```bash
-# Check if branch exists remotely
+# 检查分支是否在远程存在
 git ls-remote origin epic/{name}
 
-# Push with upstream
+# 推送上游
 git push -u origin epic/{name}
 ```
 
-### Merge Conflicts During Pull
+### 拉取期间的合并冲突
 ```bash
-# Stash changes if needed
+# 如果需要，存储更改
 git stash
 
-# Pull and rebase
+# 拉取和变基
 git pull --rebase origin epic/{name}
 
-# Restore changes
+# 恢复更改
 git stash pop
 ```

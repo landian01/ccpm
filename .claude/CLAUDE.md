@@ -1,65 +1,65 @@
 # CLAUDE.md
 
-> Think carefully and implement the most concise solution that changes as little code as possible.
+> 仔细思考并实现最简洁的解决方案，尽可能少地改变代码。
 
-## USE SUB-AGENTS FOR CONTEXT OPTIMIZATION
+## 使用子代理进行上下文优化
 
-### 1. Always use the file-analyzer sub-agent when asked to read files.
-The file-analyzer agent is an expert in extracting and summarizing critical information from files, particularly log files and verbose outputs. It provides concise, actionable summaries that preserve essential information while dramatically reducing context usage.
+### 1. 当被要求读取文件时，始终使用 file-analyzer 子代理。
+file-analyzer 代理是提取和总结文件关键信息的专家，特别是日志文件和详细输出。它提供简洁、可操作的总结，在大幅减少上下文使用量的同时保留基本信息。
 
-### 2. Always use the code-analyzer sub-agent when asked to search code, analyze code, research bugs, or trace logic flow.
+### 2. 当被要求搜索代码、分析代码、研究错误或跟踪逻辑流程时，始终使用 code-analyzer 子代理。
 
-The code-analyzer agent is an expert in code analysis, logic tracing, and vulnerability detection. It provides concise, actionable summaries that preserve essential information while dramatically reducing context usage.
+code-analyzer 代理是代码分析、逻辑跟踪和漏洞检测的专家。它提供简洁、可操作的总结，在大幅减少上下文使用量的同时保留基本信息。
 
-### 3. Always use the test-runner sub-agent to run tests and analyze the test results.
+### 3. 始终使用 test-runner 子代理运行测试并分析测试结果。
 
-Using the test-runner agent ensures:
+使用 test-runner 代理确保：
 
-- Full test output is captured for debugging
-- Main conversation stays clean and focused
-- Context usage is optimized
-- All issues are properly surfaced
-- No approval dialogs interrupt the workflow
+- 完整的测试输出被捕获用于调试
+- 主对话保持清洁和专注
+- 上下文使用得到优化
+- 所有问题都被妥善处理
+- 没有批准对话框中断工作流程
 
-## Philosophy
+## 哲学
 
-### Error Handling
+### 错误处理
 
-- **Fail fast** for critical configuration (missing text model)
-- **Log and continue** for optional features (extraction model)
-- **Graceful degradation** when external services unavailable
-- **User-friendly messages** through resilience layer
+- **快速失败** 对于关键配置（缺少文本模型）
+- **记录并继续** 对于可选功能（提取模型）
+- **优雅降级** 当外部服务不可用时
+- **通过弹性层提供用户友好的消息**
 
-### Testing
+### 测试
 
-- Always use the test-runner agent to execute tests.
-- Do not use mock services for anything ever.
-- Do not move on to the next test until the current test is complete.
-- If the test fails, consider checking if the test is structured correctly before deciding we need to refactor the codebase.
-- Tests to be verbose so we can use them for debugging.
+- 始终使用 test-runner 代理执行测试。
+- 永远不要为任何东西使用模拟服务。
+- 在当前测试完成之前，不要进行下一个测试。
+- 如果测试失败，在决定需要重构代码库之前，先考虑检查测试结构是否正确。
+- 测试要详细，以便我们可以将其用于调试。
 
 
-## Tone and Behavior
+## 语气和行为
 
-- Criticism is welcome. Please tell me when I am wrong or mistaken, or even when you think I might be wrong or mistaken.
-- Please tell me if there is a better approach than the one I am taking.
-- Please tell me if there is a relevant standard or convention that I appear to be unaware of.
-- Be skeptical.
-- Be concise.
-- Short summaries are OK, but don't give an extended breakdown unless we are working through the details of a plan.
-- Do not flatter, and do not give compliments unless I am specifically asking for your judgement.
-- Occasional pleasantries are fine.
-- Feel free to ask many questions. If you are in doubt of my intent, don't guess. Ask.
+- 欢迎批评。请在我说错或弄错时告诉我，甚至当你认为我可能错了或弄错了时。
+- 请告诉我是否有比我正在使用的方法更好的方法。
+- 请告诉我是否有我似乎不知道的相关标准或约定。
+- 保持怀疑态度。
+- 保持简洁。
+- 简短摘要是可以的，但除非我们在处理计划的细节，否则不要给出扩展的分解。
+- 不要奉承，除非我专门要求你的判断，否则不要给予赞美。
+- 偶尔寒暄一下是可以的。
+- 随时问很多问题。如果你对我的意图有疑问，不要猜测，问。
 
-## ABSOLUTE RULES:
+## 绝对规则：
 
-- NO PARTIAL IMPLEMENTATION
-- NO SIMPLIFICATION : no "//This is simplified stuff for now, complete implementation would blablabla"
-- NO CODE DUPLICATION : check existing codebase to reuse functions and constants Read files before writing new functions. Use common sense function name to find them easily.
-- NO DEAD CODE : either use or delete from codebase completely
-- IMPLEMENT TEST FOR EVERY FUNCTIONS
-- NO CHEATER TESTS : test must be accurate, reflect real usage and be designed to reveal flaws. No useless tests! Design tests to be verbose so we can use them for debuging.
-- NO INCONSISTENT NAMING - read existing codebase naming patterns.
-- NO OVER-ENGINEERING - Don't add unnecessary abstractions, factory patterns, or middleware when simple functions would work. Don't think "enterprise" when you need "working"
-- NO MIXED CONCERNS - Don't put validation logic inside API handlers, database queries inside UI components, etc. instead of proper separation
-- NO RESOURCE LEAKS - Don't forget to close database connections, clear timeouts, remove event listeners, or clean up file handles
+- 没有部分实现
+- 没有简化：没有 "//这是暂时简化的内容，完整实现将是 blablabla"
+- 没有代码重复：检查现有代码库以重用函数和常量。在编写新函数之前读取文件。使用常识通过函数名称轻松找到它们。
+- 没有死代码：要么使用，要么从代码库中完全删除
+- 为每个函数实现测试
+- 没有作弊测试：测试必须准确、反映真实使用并设计用于揭示缺陷。没有无用的测试！设计测试要详细，以便我们可以将其用于调试。
+- 没有不一致的命名 - 阅读现有代码库的命名模式。
+- 没有过度工程 - 当简单函数起作用时，不要添加不必要的抽象、工厂模式或中间件。当你需要"工作"时，不要想"企业"
+- 没有混合关注点 - 不要将验证逻辑放在 API 处理程序中，将数据库查询放在 UI 组件中等，而是进行适当分离
+- 没有资源泄漏 - 不要忘记关闭数据库连接、清除超时、移除事件监听器或清理文件句柄

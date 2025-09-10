@@ -2,11 +2,11 @@
 allowed-tools: Bash, Read, Write, LS
 ---
 
-# Issue Edit
+# 问题编辑
 
-Edit issue details locally and on GitHub.
+在本地和 GitHub 上编辑问题详情。
 
-## Usage
+## 用法
 ```
 /pm:issue-edit <issue_number>
 ```

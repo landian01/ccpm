@@ -1,43 +1,43 @@
 #!/bin/bash
 
-echo "Validating PM System..."
+echo "正在验证 PM 系统..."
 echo ""
 echo ""
 
-echo "🔍 Validating PM System"
+echo "🔍 验证 PM 系统"
 echo "======================="
 echo ""
 
 errors=0
 warnings=0
 
-# Check directory structure
-echo "📁 Directory Structure:"
-[ -d ".claude" ] && echo "  ✅ .claude directory exists" || { echo "  ❌ .claude directory missing"; ((errors++)); }
-[ -d ".claude/prds" ] && echo "  ✅ PRDs directory exists" || echo "  ⚠️ PRDs directory missing"
-[ -d ".claude/epics" ] && echo "  ✅ Epics directory exists" || echo "  ⚠️ Epics directory missing"
-[ -d ".claude/rules" ] && echo "  ✅ Rules directory exists" || echo "  ⚠️ Rules directory missing"
+# 检查目录结构
+echo "📁 目录结构:"
+[ -d ".claude" ] && echo "  ✅ .claude 目录存在" || { echo "  ❌ .claude 目录缺失"; ((errors++)); }
+[ -d ".claude/prds" ] && echo "  ✅ PRD 目录存在" || echo "  ⚠️ PRD 目录缺失"
+[ -d ".claude/epics" ] && echo "  ✅ 史诗目录存在" || echo "  ⚠️ 史诗目录缺失"
+[ -d ".claude/rules" ] && echo "  ✅ 规则目录存在" || echo "  ⚠️ 规则目录缺失"
 echo ""
 
-# Check for orphaned files
-echo "🗂️ Data Integrity:"
+# 检查孤立文件
+echo "🗂️ 数据完整性:"
 
-# Check epics have epic.md files
+# 检查史诗是否包含 epic.md 文件
 for epic_dir in .claude/epics/*/; do
   [ -d "$epic_dir" ] || continue
   if [ ! -f "$epic_dir/epic.md" ]; then
-    echo "  ⚠️ Missing epic.md in $(basename "$epic_dir")"
+    echo "  ⚠️ $(basename "$epic_dir") 中缺少 epic.md"
     ((warnings++))
   fi
 done
 
-# Check for tasks without epics
+# 检查没有史诗的任务
 orphaned=$(find .claude -name "[0-9]*.md" -not -path ".claude/epics/*/*" 2>/dev/null | wc -l)
-[ $orphaned -gt 0 ] && echo "  ⚠️ Found $orphaned orphaned task files" && ((warnings++))
+[ $orphaned -gt 0 ] && echo "  ⚠️ 发现 $orphaned 个孤立的任务文件" && ((warnings++))
 
-# Check for broken references
+# 检查损坏的引用
 echo ""
-echo "🔗 Reference Check:"
+echo "🔗 引用检查:"
 
 for task_file in .claude/epics/*/[0-9]*.md; do
   [ -f "$task_file" ] || continue
@@ -47,42 +47,42 @@ for task_file in .claude/epics/*/[0-9]*.md; do
     epic_dir=$(dirname "$task_file")
     for dep in $deps; do
       if [ ! -f "$epic_dir/$dep.md" ]; then
-        echo "  ⚠️ Task $(basename "$task_file" .md) references missing task: $dep"
+        echo "  ⚠️ 任务 $(basename "$task_file" .md) 引用了缺失的任务: $dep"
         ((warnings++))
       fi
     done
   fi
 done
 
-[ $warnings -eq 0 ] && [ $errors -eq 0 ] && echo "  ✅ All references valid"
+[ $warnings -eq 0 ] && [ $errors -eq 0 ] && echo "  ✅ 所有引用都有效"
 
-# Check frontmatter
+# 检查 frontmatter
 echo ""
-echo "📝 Frontmatter Validation:"
+echo "📝 Frontmatter 验证:"
 invalid=0
 
 for file in $(find .claude -name "*.md" -path "*/epics/*" -o -path "*/prds/*" 2>/dev/null); do
   if ! grep -q "^---" "$file"; then
-    echo "  ⚠️ Missing frontmatter: $(basename "$file")"
+    echo "  ⚠️ 缺少 frontmatter: $(basename "$file")"
     ((invalid++))
   fi
 done
 
-[ $invalid -eq 0 ] && echo "  ✅ All files have frontmatter"
+[ $invalid -eq 0 ] && echo "  ✅ 所有文件都有 frontmatter"
 
-# Summary
+# 摘要
 echo ""
-echo "📊 Validation Summary:"
-echo "  Errors: $errors"
-echo "  Warnings: $warnings"
-echo "  Invalid files: $invalid"
+echo "📊 验证摘要:"
+echo "  错误: $errors"
+echo "  警告: $warnings"
+echo "  无效文件: $invalid"
 
 if [ $errors -eq 0 ] && [ $warnings -eq 0 ] && [ $invalid -eq 0 ]; then
   echo ""
-  echo "✅ System is healthy!"
+  echo "✅ 系统运行良好！"
 else
   echo ""
-  echo "💡 Run /pm:clean to fix some issues automatically"
+  echo "💡 运行 /pm:clean 可自动修复一些问题"
 fi
 
 exit 0

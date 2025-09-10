@@ -2,25 +2,25 @@
 allowed-tools: Bash, Read, Write
 ---
 
-# Test Reference Update
+# 测试引用更新
 
-Test the task reference update logic used in epic-sync.
+测试 epic-sync 中使用的任务引用更新逻辑。
 
-## Usage
+## 用法
 ```
 /pm:test-reference-update
 ```
 
-## Instructions
+## 指令
 
-### 1. Create Test Files
+### 1. 创建测试文件
 
-Create test task files with references:
+创建带有引用的测试任务文件：
 ```bash
 mkdir -p /tmp/test-refs
 cd /tmp/test-refs
 
-# Create task 001
+# 创建任务 001
 cat > 001.md << 'EOF'
 ---
 name: Task One
@@ -33,7 +33,7 @@ conflicts_with: [002, 003]
 This is task 001.
 EOF
 
-# Create task 002
+# 创建任务 002
 cat > 002.md << 'EOF'
 ---
 name: Task Two
@@ -46,7 +46,7 @@ conflicts_with: [003]
 This is task 002, depends on 001.
 EOF
 
-# Create task 003
+# 创建任务 003
 cat > 003.md << 'EOF'
 ---
 name: Task Three
@@ -60,11 +60,11 @@ This is task 003, depends on 001 and 002.
 EOF
 ```
 
-### 2. Create Mappings
+### 2. 创建映射
 
-Simulate the issue creation mappings:
+模拟问题创建映射：
 ```bash
-# Simulate task -> issue number mapping
+# 模拟任务 -> 问题编号映射
 cat > /tmp/task-mapping.txt << 'EOF'
 001.md:42
 002.md:43
@@ -82,36 +82,36 @@ echo "ID Mapping:"
 cat /tmp/id-mapping.txt
 ```
 
-### 3. Update References
+### 3. 更新引用
 
-Process each file and update references:
+处理每个文件并更新引用：
 ```bash
 while IFS=: read -r task_file task_number; do
   echo "Processing: $task_file -> $task_number.md"
   
-  # Read the file content
+  # 读取文件内容
   content=$(cat "$task_file")
-  
-  # Update references
+
+  # 更新引用
   while IFS=: read -r old_num new_num; do
     content=$(echo "$content" | sed "s/\b$old_num\b/$new_num/g")
   done < /tmp/id-mapping.txt
-  
-  # Write to new file
+
+  # 写入新文件
   new_name="${task_number}.md"
   echo "$content" > "$new_name"
-  
-  echo "Updated content preview:"
+
+  echo "更新的内容预览："
   grep -E "depends_on:|conflicts_with:" "$new_name"
   echo "---"
 done < /tmp/task-mapping.txt
 ```
 
-### 4. Verify Results
+### 4. 验证结果
 
-Check that references were updated correctly:
+检查引用是否正确更新：
 ```bash
-echo "=== Final Results ==="
+echo "=== 最终结果 ==="
 for file in 42.md 43.md 44.md; do
   echo "File: $file"
   grep -E "name:|depends_on:|conflicts_with:" "$file"
@@ -119,16 +119,16 @@ for file in 42.md 43.md 44.md; do
 done
 ```
 
-Expected output:
-- 42.md should have conflicts_with: [43, 44]
-- 43.md should have depends_on: [42] and conflicts_with: [44]
-- 44.md should have depends_on: [42, 43]
+预期输出：
+- 42.md 应该有 conflicts_with: [43, 44]
+- 43.md 应该有 depends_on: [42] 和 conflicts_with: [44]
+- 44.md 应该有 depends_on: [42, 43]
 
-### 5. Cleanup
+### 5. 清理
 
 ```bash
 cd -
 rm -rf /tmp/test-refs
 rm -f /tmp/task-mapping.txt /tmp/id-mapping.txt
-echo "✅ Test complete and cleaned up"
+echo "✅ 测试完成并清理"
 ```

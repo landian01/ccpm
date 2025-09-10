@@ -1,95 +1,95 @@
-# Context Directory
+# 上下文目录
 
-This directory contains project context documentation that provides comprehensive information about the current state, structure, and direction of your project. The context files serve as a knowledge base for AI agents and team members to quickly understand and contribute to the project.
+此目录包含项目上下文文档，提供有关项目当前状态、结构和方向的全面信息。上下文文件作为知识库，帮助 AI 代理和团队成员快速理解项目并做出贡献。
 
-## Purpose
+## 目的
 
-The context system enables:
-- **Fast Agent Onboarding**: New AI agents can quickly understand the project through standardized documentation
-- **Project Continuity**: Maintain knowledge across development sessions and team changes
-- **Consistent Understanding**: Ensure all contributors have access to the same project information
-- **Living Documentation**: Keep project knowledge current and actionable
+上下文系统实现：
+- **快速代理入门**：新的 AI 代理可以通过标准化的文档快速理解项目
+- **项目连续性**：在开发会话和团队变更中保持知识
+- **一致性理解**：确保所有贡献者都能访问相同项目信息
+- **动态文档**：保持项目知识的时效性和可操作性
 
-## Core Context Files
+## 核心上下文文件
 
-When fully initialized, this directory contains:
+完全初始化后，此目录包含：
 
-### Project Foundation
-- **`project-brief.md`** - Project scope, goals, and key objectives
-- **`project-vision.md`** - Long-term vision and strategic direction
-- **`project-overview.md`** - High-level summary of features and capabilities
-- **`progress.md`** - Current project status, completed work, and immediate next steps
+### 项目基础
+- **`project-brief.md`** - 项目范围、目标和关键目标
+- **`project-vision.md`** - 长期愿景和战略方向
+- **`project-overview.md`** - 功能和能力的概览
+- **`progress.md`** - 当前项目状态、已完成工作和立即下一步
 
-### Technical Context
-- **`tech-context.md`** - Dependencies, technologies, and development tools
-- **`project-structure.md`** - Directory structure and file organization
-- **`system-patterns.md`** - Architectural patterns and design decisions
-- **`project-style-guide.md`** - Coding standards, conventions, and style preferences
+### 技术上下文
+- **`tech-context.md`** - 依赖项、技术和开发工具
+- **`project-structure.md`** - 目录结构和文件组织
+- **`system-patterns.md`** - 架构模式和设计决策
+- **`project-style-guide.md`** - 编码标准、约定和风格偏好
 
-### Product Context
-- **`product-context.md`** - Product requirements, target users, and core functionality
+### 产品上下文
+- **`product-context.md`** - 产品需求、目标用户和核心功能
 
-## Context Commands
+## 上下文命令
 
-Use these commands to manage your project context:
+使用这些命令管理项目上下文：
 
-### Initialize Context
+### 初始化上下文
 ```bash
 /context:create
 ```
-Analyzes your project and creates initial context documentation. Use this when:
-- Starting a new project
-- Adding context to an existing project
-- Major project restructuring
+分析项目并创建初始上下文文档。在以下情况使用：
+- 开始新项目
+- 为现有项目添加上下文
+- 主要项目重组
 
-### Load Context
+### 加载上下文
 ```bash
 /context:prime
 ```
-Loads all context information for a new agent session. Use this when:
-- Starting a new development session
-- Onboarding a new team member
-- Getting up to speed on project status
+为新的代理会话加载所有上下文信息。在以下情况使用：
+- 开始新的开发会话
+-  onboarding 新团队成员
+- 快速了解项目状态
 
-### Update Context
+### 更新上下文
 ```bash
 /context:update
 ```
-Updates context documentation to reflect current project state. Use this:
-- At the end of development sessions
-- After completing major features
-- When project direction changes
-- After architectural changes
+更新上下文文档以反映当前项目状态。在以下情况使用：
+- 在开发会话结束时
+- 完成主要功能后
+- 项目方向发生变化时
+- 架构变更后
 
-## Context Workflow
+## 上下文工作流
 
-1. **Project Start**: Run `/context:create` to establish baseline documentation
-2. **Session Start**: Run `/context:prime` to load current context
-3. **Development**: Work on your project with full context awareness
-4. **Session End**: Run `/context:update` to capture changes and progress
+1. **项目开始**：运行 `/context:create` 建立基准文档
+2. **会话开始**：运行 `/context:prime` 加载当前上下文
+3. **开发**：在充分了解上下文的情况下处理项目
+4. **会话结束**：运行 `/context:update` 捕获变更和进度
 
-## Benefits
+## 优势
 
-- **Reduced Onboarding Time**: New contributors understand the project quickly
-- **Maintained Project Memory**: Nothing gets lost between sessions
-- **Consistent Architecture**: Decisions are documented and followed
-- **Clear Progress Tracking**: Always know what's been done and what's next
-- **Enhanced AI Collaboration**: AI agents have full project understanding
+- **减少 onboarding 时间**：新贡献者快速理解项目
+- **保持项目记忆**：会话间不会丢失任何信息
+- **一致性架构**：决策被记录并遵循
+- **清晰进度跟踪**：始终知道已完成和下一步工作
+- **增强 AI 协作**：AI 代理拥有完整项目理解
 
-## Best Practices
+## 最佳实践
 
-- **Keep Current**: Update context regularly, especially after major changes
-- **Be Concise**: Focus on essential information that helps understanding
-- **Stay Consistent**: Follow established formats and structures
-- **Document Decisions**: Capture architectural and design decisions
-- **Track Progress**: Maintain accurate status and next steps
+- **保持时效性**：定期更新上下文，尤其在重大变更后
+- **保持简洁**：专注于帮助理解的基本信息
+- **保持一致性**：遵循已建立的格式和结构
+- **记录决策**：捕获架构和设计决策
+- **跟踪进度**：维护准确的状态和下一步
 
-## Integration
+## 集成
 
-The context system integrates with:
-- **Project Management**: Links with PRDs, epics, and task tracking
-- **Development Workflow**: Supports continuous development sessions
-- **Documentation**: Complements existing project documentation
-- **Team Collaboration**: Provides shared understanding across contributors
+上下文系统与以下系统集成：
+- **项目管理**：与 PRD、史诗和任务跟踪关联
+- **开发工作流**：支持持续开发会话
+- **文档**：补充现有项目文档
+- **团队协作**：为贡献者提供共享理解
 
-Start with `/context:create` to initialize your project's knowledge base!
+从 `/context:create` 开始初始化项目知识库！

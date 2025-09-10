@@ -1,9 +1,9 @@
 #!/bin/bash
-echo "Getting tasks..."
+echo "正在获取任务..."
 echo ""
 echo ""
 
-echo "🚫 Blocked Tasks"
+echo "🚫 阻塞的任务"
 echo "================"
 echo ""
 
@@ -27,9 +27,9 @@ for epic_dir in .claude/epics/*/; do
       task_name=$(grep "^name:" "$task_file" | head -1 | sed 's/^name: *//')
       task_num=$(basename "$task_file" .md)
 
-      echo "⏸️ Task #$task_num - $task_name"
-      echo "   Epic: $epic_name"
-      echo "   Blocked by: [$deps]"
+      echo "⏸️ 任务 #$task_num - $task_name"
+      echo "   史诗: $epic_name"
+      echo "   阻塞原因: [$deps]"
 
       # Check status of dependencies
       open_deps=""
@@ -41,7 +41,7 @@ for epic_dir in .claude/epics/*/; do
         fi
       done
 
-      [ -n "$open_deps" ] && echo "   Waiting for:$open_deps"
+      [ -n "$open_deps" ] && echo "   等待:$open_deps"
       echo ""
       ((found++))
     fi
@@ -49,11 +49,11 @@ for epic_dir in .claude/epics/*/; do
 done
 
 if [ $found -eq 0 ]; then
-  echo "No blocked tasks found!"
+  echo "未找到阻塞的任务！"
   echo ""
-  echo "💡 All tasks with dependencies are either completed or in progress."
+  echo "💡 所有有依赖关系的任务都已完成或正在进行中。"
 else
-  echo "📊 Total blocked: $found tasks"
+  echo "📊 阻塞总数: $found 个任务"
 fi
 
 exit 0

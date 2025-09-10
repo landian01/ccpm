@@ -2,65 +2,65 @@
 allowed-tools: Bash, Read, Write, LS
 ---
 
-# Issue Analyze
+# 问题分析
 
-Analyze an issue to identify parallel work streams for maximum efficiency.
+分析问题以识别并行工作流，实现最大效率。
 
-## Usage
+## 用法
 ```
 /pm:issue-analyze <issue_number>
 ```
 
-## Quick Check
+## 快速检查
 
-1. **Find local task file:**
-   - First check if `.claude/epics/*/$ARGUMENTS.md` exists (new naming convention)
-   - If not found, search for file containing `github:.*issues/$ARGUMENTS` in frontmatter (old naming)
-   - If not found: "❌ No local task for issue #$ARGUMENTS. Run: /pm:import first"
+1. **查找本地任务文件：**
+   - 首先检查 `.claude/epics/*/$ARGUMENTS.md` 是否存在（新命名约定）
+   - 如果未找到，在前置元数据中搜索包含 `github:.*issues/$ARGUMENTS` 的文件（旧命名）
+   - 如果未找到："❌ 问题 #$ARGUMENTS 没有本地任务。先运行：/pm:import"
 
-2. **Check for existing analysis:**
+2. **检查现有分析：**
    ```bash
-   test -f .claude/epics/*/$ARGUMENTS-analysis.md && echo "⚠️ Analysis already exists. Overwrite? (yes/no)"
+   test -f .claude/epics/*/$ARGUMENTS-analysis.md && echo "⚠️ 分析已存在。是否覆盖？（yes/no）"
    ```
 
-## Instructions
+## 指令
 
-### 1. Read Issue Context
+### 1. 读取问题上下文
 
-Get issue details from GitHub:
+从 GitHub 获取问题详情：
 ```bash
 gh issue view $ARGUMENTS --json title,body,labels
 ```
 
-Read local task file to understand:
-- Technical requirements
-- Acceptance criteria
-- Dependencies
-- Effort estimate
+读取本地任务文件以了解：
+- 技术要求
+- 验收标准
+- 依赖项
+- 工作量估算
 
-### 2. Identify Parallel Work Streams
+### 2. 识别并行工作流
 
-Analyze the issue to identify independent work that can run in parallel:
+分析问题以识别可以并行运行的独立工作：
 
-**Common Patterns:**
-- **Database Layer**: Schema, migrations, models
-- **Service Layer**: Business logic, data access
-- **API Layer**: Endpoints, validation, middleware
-- **UI Layer**: Components, pages, styles
-- **Test Layer**: Unit tests, integration tests
-- **Documentation**: API docs, README updates
+**常见模式：**
+- **数据库层**：Schema、迁移、模型
+- **服务层**：业务逻辑、数据访问
+- **API 层**：端点、验证、中间件
+- **UI 层**：组件、页面、样式
+- **测试层**：单元测试、集成测试
+- **文档**：API 文档、README 更新
 
-**Key Questions:**
-- What files will be created/modified?
-- Which changes can happen independently?
-- What are the dependencies between changes?
-- Where might conflicts occur?
+**关键问题：**
+- 将创建/修改哪些文件？
+- 哪些更改可以独立进行？
+- 更改之间有哪些依赖关系？
+- 可能在哪些地方发生冲突？
 
-### 3. Create Analysis File
+### 3. 创建分析文件
 
-Get current datetime: `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+获取当前日期时间：`date -u +"%Y-%m-%dT%H:%M:%SZ"`
 
-Create `.claude/epics/{epic_name}/$ARGUMENTS-analysis.md`:
+创建 `.claude/epics/{epic_name}/$ARGUMENTS-analysis.md`：
 
 ```markdown
 ---
@@ -71,115 +71,115 @@ estimated_hours: {total_hours}
 parallelization_factor: {1.0-5.0}
 ---
 
-# Parallel Work Analysis: Issue #$ARGUMENTS
+# 并行工作分析：问题 #$ARGUMENTS
 
-## Overview
-{Brief description of what needs to be done}
+## 概述
+{需要完成的工作简要描述}
 
-## Parallel Streams
+## 并行流
 
-### Stream A: {Stream Name}
-**Scope**: {What this stream handles}
-**Files**:
-- {file_pattern_1}
-- {file_pattern_2}
-**Agent Type**: {backend|frontend|fullstack|database}-specialist
-**Can Start**: immediately
-**Estimated Hours**: {hours}
-**Dependencies**: none
+### 流 A：{流名称}
+**范围**：{此流处理的内容}
+**文件**：
+- {文件模式_1}
+- {文件模式_2}
+**代理类型**：{backend|frontend|fullstack|database}-specialist
+**可开始**：立即
+**预计小时数**：{小时数}
+**依赖项**：无
 
-### Stream B: {Stream Name}
-**Scope**: {What this stream handles}
-**Files**:
-- {file_pattern_1}
-- {file_pattern_2}
-**Agent Type**: {agent_type}
-**Can Start**: immediately
-**Estimated Hours**: {hours}
-**Dependencies**: none
+### 流 B：{流名称}
+**范围**：{此流处理的内容}
+**文件**：
+- {文件模式_1}
+- {文件模式_2}
+**代理类型**：{代理类型}
+**可开始**：立即
+**预计小时数**：{小时数}
+**依赖项**：无
 
-### Stream C: {Stream Name}
-**Scope**: {What this stream handles}
-**Files**:
-- {file_pattern_1}
-**Agent Type**: {agent_type}
-**Can Start**: after Stream A completes
-**Estimated Hours**: {hours}
-**Dependencies**: Stream A
+### 流 C：{流名称}
+**范围**：{此流处理的内容}
+**文件**：
+- {文件模式_1}
+**代理类型**：{代理类型}
+**可开始**：流 A 完成后
+**预计小时数**：{小时数}
+**依赖项**：流 A
 
-## Coordination Points
+## 协调点
 
-### Shared Files
-{List any files multiple streams need to modify}:
-- `src/types/index.ts` - Streams A & B (coordinate type updates)
-- `package.json` - Stream B (add dependencies)
+### 共享文件
+{列出多个流需要修改的任何文件}：
+- `src/types/index.ts` - 流 A & B（协调类型更新）
+- `package.json` - 流 B（添加依赖项）
 
-### Sequential Requirements
-{List what must happen in order}:
-1. Database schema before API endpoints
-2. API types before UI components
-3. Core logic before tests
+### 顺序要求
+{列出必须按顺序发生的内容}：
+1. API 端点之前的数据库 schema
+2. UI 组件之前的 API 类型
+3. 测试之前的核心逻辑
 
-## Conflict Risk Assessment
-- **Low Risk**: Streams work on different directories
-- **Medium Risk**: Some shared type files, manageable with coordination
-- **High Risk**: Multiple streams modifying same core files
+## 冲突风险评估
+- **低风险**：流在不同目录中工作
+- **中等风险**：一些共享类型文件，通过协调可管理
+- **高风险**：多个流修改相同核心文件
 
-## Parallelization Strategy
+## 并行化策略
 
-**Recommended Approach**: {sequential|parallel|hybrid}
+**推荐方法**：{sequential|parallel|hybrid}
 
-{If parallel}: Launch Streams A, B simultaneously. Start C when A completes.
-{If sequential}: Complete Stream A, then B, then C.
-{If hybrid}: Start A & B together, C depends on A, D depends on B & C.
+{如果是并行}：同时启动流 A、B。当 A 完成后启动 C。
+{如果是顺序}：完成流 A，然后 B，然后 C。
+{如果是混合}：一起启动 A & B，C 依赖于 A，D 依赖于 B & C。
 
-## Expected Timeline
+## 预期时间表
 
-With parallel execution:
-- Wall time: {max_stream_hours} hours
-- Total work: {sum_all_hours} hours
-- Efficiency gain: {percentage}%
+使用并行执行：
+- 墙钟时间：{max_stream_hours} 小时
+- 总工作量：{sum_all_hours} 小时
+- 效率提升：{percentage}%
 
-Without parallel execution:
-- Wall time: {sum_all_hours} hours
+不使用并行执行：
+- 墙钟时间：{sum_all_hours} 小时
 
-## Notes
-{Any special considerations, warnings, or recommendations}
+## 说明
+{任何特殊考虑、警告或建议}
 ```
 
-### 4. Validate Analysis
+### 4. 验证分析
 
-Ensure:
-- All major work is covered by streams
-- File patterns don't unnecessarily overlap
-- Dependencies are logical
-- Agent types match the work type
-- Time estimates are reasonable
+确保：
+- 所有主要工作都被流覆盖
+- 文件模式不会不必要地重叠
+- 依赖关系是合理的
+- 代理类型与工作类型匹配
+- 时间估算是合理的
 
-### 5. Output
+### 5. 输出
 
 ```
-✅ Analysis complete for issue #$ARGUMENTS
+✅ 问题 #$ARGUMENTS 的分析完成
 
-Identified {count} parallel work streams:
-  Stream A: {name} ({hours}h)
-  Stream B: {name} ({hours}h)
-  Stream C: {name} ({hours}h)
-  
-Parallelization potential: {factor}x speedup
-  Sequential time: {total}h
-  Parallel time: {reduced}h
+识别了 {count} 个并行工作流：
+  流 A：{名称} ({小时数}h)
+  流 B：{名称} ({小时数}h)
+  流 C：{名称} ({小时数}h)
 
-Files at risk of conflict:
-  {list shared files if any}
+并行化潜力：{因子}x 加速
+  顺序时间：{总计}h
+  并行时间：{减少}h
 
-Next: Start work with /pm:issue-start $ARGUMENTS
+存在冲突风险的文件：
+  {如有共享文件则列出}
+
+下一步：使用 /pm:issue-start $ARGUMENTS 开始工作
 ```
 
-## Important Notes
+## 重要说明
 
-- Analysis is local only - not synced to GitHub
-- Focus on practical parallelization, not theoretical maximum
-- Consider agent expertise when assigning streams
-- Account for coordination overhead in estimates
-- Prefer clear separation over maximum parallelization
+- 分析仅限于本地 - 不会同步到 GitHub
+- 专注于实际并行化，而不是理论最大值
+- 在分配流时考虑代理专业知识
+- 在估算中考虑协调开销
+- 优先选择清晰分离而不是最大并行化

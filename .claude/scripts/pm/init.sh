@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Initializing..."
+echo "正在初始化..."
 echo ""
 echo ""
 
@@ -18,60 +18,60 @@ echo "https://github.com/automazeio/ccpm"
 echo ""
 echo ""
 
-echo "🚀 Initializing Claude Code PM System"
+echo "🚀 正在初始化 Claude Code PM 系统"
 echo "======================================"
 echo ""
 
-# Check for required tools
-echo "🔍 Checking dependencies..."
+# 检查必需工具
+echo "🔍 正在检查依赖项..."
 
-# Check gh CLI
+# 检查 gh CLI
 if command -v gh &> /dev/null; then
-  echo "  ✅ GitHub CLI (gh) installed"
+  echo "  ✅ GitHub CLI (gh) 已安装"
 else
-  echo "  ❌ GitHub CLI (gh) not found"
+  echo "  ❌ 未找到 GitHub CLI (gh)"
   echo ""
-  echo "  Installing gh..."
+  echo "  正在安装 gh..."
   if command -v brew &> /dev/null; then
     brew install gh
   elif command -v apt-get &> /dev/null; then
     sudo apt-get update && sudo apt-get install gh
   else
-    echo "  Please install GitHub CLI manually: https://cli.github.com/"
+    echo "  请手动安装 GitHub CLI: https://cli.github.com/"
     exit 1
   fi
 fi
 
-# Check gh auth status
+# 检查 gh 认证状态
 echo ""
-echo "🔐 Checking GitHub authentication..."
+echo "🔐 正在检查 GitHub 认证..."
 if gh auth status &> /dev/null; then
-  echo "  ✅ GitHub authenticated"
+  echo "  ✅ GitHub 已认证"
 else
-  echo "  ⚠️ GitHub not authenticated"
-  echo "  Running: gh auth login"
+  echo "  ⚠️ GitHub 未认证"
+  echo "  正在运行: gh auth login"
   gh auth login
 fi
 
-# Check for gh-sub-issue extension
+# 检查 gh-sub-issue 扩展
 echo ""
-echo "📦 Checking gh extensions..."
+echo "📦 正在检查 gh 扩展..."
 if gh extension list | grep -q "yahsan2/gh-sub-issue"; then
-  echo "  ✅ gh-sub-issue extension installed"
+  echo "  ✅ gh-sub-issue 扩展已安装"
 else
-  echo "  📥 Installing gh-sub-issue extension..."
+  echo "  📥 正在安装 gh-sub-issue 扩展..."
   gh extension install yahsan2/gh-sub-issue
 fi
 
-# Create directory structure
+# 创建目录结构
 echo ""
-echo "📁 Creating directory structure..."
+echo "📁 正在创建目录结构..."
 mkdir -p .claude/prds
 mkdir -p .claude/epics
 mkdir -p .claude/rules
 mkdir -p .claude/agents
 mkdir -p .claude/scripts/pm
-echo "  ✅ Directories created"
+echo "  ✅ 目录已创建"
 
 # Copy scripts if in main repo
 if [ -d "scripts/pm" ] && [ ! "$(pwd)" = *"/.claude"* ]; then

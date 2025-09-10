@@ -1,112 +1,112 @@
-# Agents
+# 代理
 
-Specialized agents that do heavy work and return concise summaries to preserve context.
+专门执行繁重工作并返回简洁摘要以保护上下文的代理。
 
-## Core Philosophy
+## 核心理念
 
-> “Don't anthropomorphize subagents. Use them to organize your prompts and elide context. Subagents are best when they can do lots of work but then provide small amounts of information back to the main conversation thread.”
+> "不要将子代理拟人化。使用它们来组织你的提示并省略上下文。子代理最好的状态是它们能做大量工作，然后向主对话线程提供少量信息。"
 >
 > – Adam Wolff, Anthropic
 
-## Available Agents
+## 可用代理
 
 ### 🔍 `code-analyzer`
-- **Purpose**: Hunt bugs across multiple files without polluting main context
-- **Pattern**: Search many files → Analyze code → Return bug report
-- **Usage**: When you need to trace logic flows, find bugs, or validate changes
-- **Returns**: Concise bug report with critical findings only
+- **目的**: 在多个文件中查找错误而不污染主上下文
+- **模式**: 搜索多个文件 → 分析代码 → 返回错误报告
+- **用法**: 当你需要跟踪逻辑流程、查找错误或验证更改时
+- **返回**: 仅包含关键发现的简洁错误报告
 
 ### 📄 `file-analyzer`
-- **Purpose**: Read and summarize verbose files (logs, outputs, configs)
-- **Pattern**: Read files → Extract insights → Return summary
-- **Usage**: When you need to understand log files or analyze verbose output
-- **Returns**: Key findings and actionable insights (80-90% size reduction)
+- **目的**: 读取和总结冗长文件（日志、输出、配置）
+- **模式**: 读取文件 → 提取见解 → 返回摘要
+- **用法**: 当你需要理解日志文件或分析冗长输出时
+- **返回**: 关键发现和可操作的见解（减少 80-90% 的体积）
 
 ### 🧪 `test-runner`
-- **Purpose**: Execute tests without dumping output to main thread
-- **Pattern**: Run tests → Capture to log → Analyze results → Return summary
-- **Usage**: When you need to run tests and understand failures
-- **Returns**: Test results summary with failure analysis
+- **目的**: 执行测试而不将输出转储到主线程
+- **模式**: 运行测试 → 捕获到日志 → 分析结果 → 返回摘要
+- **用法**: 当你需要运行测试并理解失败原因时
+- **返回**: 包含失败分析的测试结果摘要
 
 ### 🔀 `parallel-worker`
-- **Purpose**: Coordinate multiple parallel work streams for an issue
-- **Pattern**: Read analysis → Spawn sub-agents → Consolidate results → Return summary
-- **Usage**: When executing parallel work streams in a worktree
-- **Returns**: Consolidated status of all parallel work
+- **目的**: 协调一个问题的多个并行工作流
+- **模式**: 读取分析 → 生成子代理 → 整合结果 → 返回摘要
+- **用法**: 当在工作树中执行并行工作流时
+- **返回**: 所有并行工作的整合状态
 
-## Why Agents?
+## 为什么需要代理？
 
-Agents are **context firewalls** that protect the main conversation from information overload:
+代理是 **上下文防火墙**，保护主对话免受信息过载的影响：
 
 ```
-Without Agent:
-Main thread reads 10 files → Context explodes → Loses coherence
+没有代理：
+主线程读取 10 个文件 → 上下文爆炸 → 失去连贯性
 
-With Agent:
-Agent reads 10 files → Main thread gets 1 summary → Context preserved
+有代理：
+代理读取 10 个文件 → 主线程获得 1 个摘要 → 上下文保持
 ```
 
-## How Agents Preserve Context
+## 代理如何保护上下文
 
-1. **Heavy Lifting** - Agents do the messy work (reading files, running tests, implementing features)
-2. **Context Isolation** - Implementation details stay in the agent, not the main thread
-3. **Concise Returns** - Only essential information returns to main conversation
-4. **Parallel Execution** - Multiple agents can work simultaneously without context collision
+1. **繁重工作** - 代理执行繁琐的工作（读取文件、运行测试、实现功能）
+2. **上下文隔离** - 实现细节保留在代理中，不在主线程中
+3. **简洁返回** - 只有必要的信息返回到主对话
+4. **并行执行** - 多个代理可以同时工作而不会发生上下文冲突
 
-## Example Usage
+## 使用示例
 
 ```bash
-# Analyzing code for bugs
-Task: "Search for memory leaks in the codebase"
-Agent: code-analyzer
-Returns: "Found 3 potential leaks: [concise list]"
-Main thread never sees: The hundreds of files examined
+# 分析代码中的错误
+任务："在代码库中搜索内存泄漏"
+代理：code-analyzer
+返回："发现 3 个潜在泄漏：[简洁列表]"
+主线程永远不会看到：检查的数百个文件
 
-# Running tests
-Task: "Run authentication tests"
-Agent: test-runner
-Returns: "2/10 tests failed: [failure summary]"
-Main thread never sees: Verbose test output and logs
+# 运行测试
+任务："运行身份验证测试"
+代理：test-runner
+返回："2/10 测试失败：[失败摘要]"
+主线程永远不会看到：冗长的测试输出和日志
 
-# Parallel implementation
-Task: "Implement issue #1234 with parallel streams"
-Agent: parallel-worker
-Returns: "Completed 4/4 streams, 15 files modified"
-Main thread never sees: Individual implementation details
+# 并行实现
+任务："使用并行流实现问题 #1234"
+代理：parallel-worker
+返回："完成 4/4 个流，修改了 15 个文件"
+主线程永远不会看到：单个实现细节
 ```
 
-## Creating New Agents
+## 创建新代理
 
-New agents should follow these principles:
+新代理应遵循以下原则：
 
-1. **Single Purpose** - Each agent has one clear job
-2. **Context Reduction** - Return 10-20% of what you process
-3. **No Roleplay** - Agents aren't "experts", they're task executors
-4. **Clear Pattern** - Define input → processing → output pattern
-5. **Error Handling** - Gracefully handle failures and report clearly
+1. **单一目的** - 每个代理有一个明确的工作
+2. **上下文减少** - 返回处理内容的 10-20%
+3. **不要角色扮演** - 代理不是"专家"，它们是任务执行者
+4. **清晰模式** - 定义输入 → 处理 → 输出模式
+5. **错误处理** - 优雅地处理失败并清晰地报告
 
-## Anti-Patterns to Avoid
+## 避免的反模式
 
-❌ **Creating "specialist" agents** (database-expert, api-expert)
-   Agents don't have different knowledge - they're all the same model
+❌ **创建"专家"代理**（database-expert, api-expert）
+   代理没有不同的知识 - 它们都是相同的模型
 
-❌ **Returning verbose output**
-   Defeats the purpose of context preservation
+❌ **返回冗长输出**
+   违背了上下文保护的目的
 
-❌ **Making agents communicate with each other**
-   Use a coordinator agent instead (like parallel-worker)
+❌ **让代理相互通信**
+   使用协调器代理代替（如 parallel-worker）
 
-❌ **Using agents for simple tasks**
-   Only use agents when context reduction is valuable
+❌ **为简单任务使用代理**
+   只有在上下文减少有价值时才使用代理
 
-## Integration with PM System
+## 与 PM 系统集成
 
-Agents integrate seamlessly with the PM command system:
+代理与 PM 命令系统无缝集成：
 
-- `/pm:issue-analyze` → Identifies work streams
-- `/pm:issue-start` → Spawns parallel-worker agent
-- parallel-worker → Spawns multiple sub-agents
-- Sub-agents → Work in parallel in the worktree
-- Results → Consolidated back to main thread
+- `/pm:issue-analyze` → 识别工作流
+- `/pm:issue-start` → 生成 parallel-worker 代理
+- parallel-worker → 生成多个子代理
+- 子代理 → 在工作树中并行工作
+- 结果 → 整合回主线程
 
-This creates a hierarchy that maximizes parallelism while preserving context at every level.
+这创建了一个层次结构，在最大化并行性的同时在每个级别保护上下文。

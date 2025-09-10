@@ -2,81 +2,81 @@
 allowed-tools: Bash, Read, Write, LS
 ---
 
-# Sync
+# 同步
 
-Full bidirectional sync between local and GitHub.
+本地和 GitHub 之间的完全双向同步。
 
-## Usage
+## 用法
 ```
 /pm:sync [epic_name]
 ```
 
-If epic_name provided, sync only that epic. Otherwise sync all.
+如果提供了 epic_name，则仅同步该史诗。否则同步所有。
 
-## Instructions
+## 指令
 
-### 1. Pull from GitHub
+### 1. 从 GitHub 拉取
 
-Get current state of all issues:
+获取所有问题的当前状态：
 ```bash
-# Get all epic and task issues
+# 获取所有史诗和任务问题
 gh issue list --label "epic" --limit 1000 --json number,title,state,body,labels,updatedAt
 gh issue list --label "task" --limit 1000 --json number,title,state,body,labels,updatedAt
 ```
 
-### 2. Update Local from GitHub
+### 2. 从 GitHub 更新本地
 
-For each GitHub issue:
-- Find corresponding local file by issue number
-- Compare states:
-  - If GitHub state newer (updatedAt > local updated), update local
-  - If GitHub closed but local open, close local
-  - If GitHub reopened but local closed, reopen local
-- Update frontmatter to match GitHub state
+对于每个 GitHub 问题：
+- 通过问题编号查找对应的本地文件
+- 比较状态：
+  - 如果 GitHub 状态更新（updatedAt > local updated），更新本地
+  - 如果 GitHub 已关闭但本地打开，关闭本地
+  - 如果 GitHub 已重新打开但本地关闭，重新打开本地
+- 更新前置元数据以匹配 GitHub 状态
 
-### 3. Push Local to GitHub
+### 3. 将本地推送到 GitHub
 
-For each local task/epic:
-- If has GitHub URL but GitHub issue not found, it was deleted - mark local as archived
-- If no GitHub URL, create new issue (like epic-sync)
-- If local updated > GitHub updatedAt, push changes:
+对于每个本地任务/史诗：
+- 如果有 GitHub URL 但未找到 GitHub 问题，则已被删除 - 将本地标记为已归档
+- 如果没有 GitHub URL，创建新问题（类似 epic-sync）
+- 如果本地更新 > GitHub updatedAt，则推送更改：
   ```bash
   gh issue edit {number} --body-file {local_file}
   ```
 
-### 4. Handle Conflicts
+### 4. 处理冲突
 
-If both changed (local and GitHub updated since last sync):
-- Show both versions
-- Ask user: "Local and GitHub both changed. Keep: (local/github/merge)?"
-- Apply user's choice
+如果双方都更改了（本地和 GitHub 自上次同步以来都更新了）：
+- 显示两个版本
+- 询问用户："本地和 GitHub 都更改了。保留：（local/github/merge）？"
+- 应用用户的选择
 
-### 5. Update Sync Timestamps
+### 5. 更新同步时间戳
 
-Update all synced files with last_sync timestamp.
+使用 last_sync 时间戳更新所有同步的文件。
 
-### 6. Output
+### 6. 输出
 
 ```
-🔄 Sync Complete
+🔄 同步完成
 
-Pulled from GitHub:
-  Updated: {count} files
-  Closed: {count} issues
-  
-Pushed to GitHub:
-  Updated: {count} issues
-  Created: {count} new issues
-  
-Conflicts resolved: {count}
+从 GitHub 拉取：
+  已更新：{count} 个文件
+  已关闭：{count} 个问题
 
-Status:
-  ✅ All files synced
-  {or list any sync failures}
+推送到 GitHub：
+  已更新：{count} 个问题
+  已创建：{count} 个新问题
+
+已解决冲突：{count}
+
+状态：
+  ✅ 所有文件已同步
+  {或列出任何同步失败的项目}
 ```
 
-## Important Notes
+## 重要说明
 
-Follow `/rules/github-operations.md` for GitHub commands.
-Follow `/rules/frontmatter-operations.md` for local updates.
-Always backup before sync in case of issues.
+GitHub 命令遵循 `/rules/github-operations.md`。
+本地更新遵循 `/rules/frontmatter-operations.md`。
+为防止问题，始终在同步前备份。

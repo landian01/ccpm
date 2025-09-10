@@ -2,10 +2,10 @@
 allowed-tools: Bash
 ---
 
-Run `bash .claude/scripts/pm/epic-show.sh $ARGUMENTS` using a sub-agent and show me the complete output.
+使用子代理运行 `bash .claude/scripts/pm/epic-show.sh $ARGUMENTS` 并向我显示完整输出。
 
-- DO NOT truncate.
-- DO NOT collapse.
-- DO NOT abbreviate.
-- Show ALL lines in full.
-- DO NOT print any other comments.
+- 不要截断。
+- 不要折叠。
+- 不要缩写。
+- 完整显示所有行。
+- 不要打印任何其他注释。

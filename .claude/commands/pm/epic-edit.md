@@ -2,32 +2,32 @@
 allowed-tools: Read, Write, LS
 ---
 
-# Epic Edit
+# 史诗编辑
 
-Edit epic details after creation.
+在创建后编辑史诗详情。
 
-## Usage
+## 用法
 ```
 /pm:epic-edit <epic_name>
 ```
 
-## Instructions
+## 指令
 
-### 1. Read Current Epic
+### 1. 读取当前史诗
 
-Read `.claude/epics/$ARGUMENTS/epic.md`:
-- Parse frontmatter
-- Read content sections
+读取 `.claude/epics/$ARGUMENTS/epic.md`：
+- 解析前置元数据
+- 读取内容部分
 
-### 2. Interactive Edit
+### 2. 交互式编辑
 
-Ask user what to edit:
-- Name/Title
-- Description/Overview
-- Architecture decisions
-- Technical approach
-- Dependencies
-- Success criteria
+询问用户要编辑什么：
+- 名称/标题
+- 描述/概述
+- 架构决策
+- 技术方法
+- 依赖项
+- 成功标准
 
 ### 3. Update Epic File
 

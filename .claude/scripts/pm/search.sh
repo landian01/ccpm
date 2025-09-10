@@ -3,69 +3,69 @@
 query="$1"
 
 if [ -z "$query" ]; then
-  echo "❌ Please provide a search query"
-  echo "Usage: /pm:search <query>"
+  echo "❌ 请提供搜索查询"
+  echo "用法: /pm:search <query>"
   exit 1
 fi
 
-echo "Searching for '$query'..."
+echo "正在搜索 '$query'..."
 echo ""
 echo ""
 
-echo "🔍 Search results for: '$query'"
+echo "🔍 搜索结果: '$query'"
 echo "================================"
 echo ""
 
-# Search in PRDs
+# 在 PRD 中搜索
 if [ -d ".claude/prds" ]; then
-  echo "📄 PRDs:"
+  echo "📄 PRD:"
   results=$(grep -l -i "$query" .claude/prds/*.md 2>/dev/null)
   if [ -n "$results" ]; then
     for file in $results; do
       name=$(basename "$file" .md)
       matches=$(grep -c -i "$query" "$file")
-      echo "  • $name ($matches matches)"
+      echo "  • $name ($matches 个匹配)"
     done
   else
-    echo "  No matches"
+    echo "  无匹配项"
   fi
   echo ""
 fi
 
-# Search in Epics
+# 在史诗中搜索
 if [ -d ".claude/epics" ]; then
-  echo "📚 Epics:"
+  echo "📚 史诗:"
   results=$(find .claude/epics -name "epic.md" -exec grep -l -i "$query" {} \; 2>/dev/null)
   if [ -n "$results" ]; then
     for file in $results; do
       epic_name=$(basename $(dirname "$file"))
       matches=$(grep -c -i "$query" "$file")
-      echo "  • $epic_name ($matches matches)"
+      echo "  • $epic_name ($matches 个匹配)"
     done
   else
-    echo "  No matches"
+    echo "  无匹配项"
   fi
   echo ""
 fi
 
-# Search in Tasks
+# 在任务中搜索
 if [ -d ".claude/epics" ]; then
-  echo "📝 Tasks:"
+  echo "📝 任务:"
   results=$(find .claude/epics -name "[0-9]*.md" -exec grep -l -i "$query" {} \; 2>/dev/null | head -10)
   if [ -n "$results" ]; then
     for file in $results; do
       epic_name=$(basename $(dirname "$file"))
       task_num=$(basename "$file" .md)
-      echo "  • Task #$task_num in $epic_name"
+      echo "  • $epic_name 中的任务 #$task_num"
     done
   else
-    echo "  No matches"
+    echo "  无匹配项"
   fi
 fi
 
-# Summary
+# 摘要
 total=$(find .claude -name "*.md" -exec grep -l -i "$query" {} \; 2>/dev/null | wc -l)
 echo ""
-echo "📊 Total files with matches: $total"
+echo "📊 包含匹配的文件总数: $total"
 
 exit 0

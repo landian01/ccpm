@@ -2,145 +2,145 @@
 allowed-tools: Bash, Read, LS
 ---
 
-# Prime Context
+# 加载上下文
 
-This command loads essential context for a new agent session by reading the project context documentation and understanding the codebase structure.
+此命令通过读取项目上下文文档并理解代码库结构，为新代理会话加载必要的上下文。
 
-## Preflight Checklist
+## 预检查清单
 
-Before proceeding, complete these validation steps.
-Do not bother the user with preflight checks progress ("I'm not going to ..."). Just do them and move on.
+在继续之前，完成这些验证步骤。
+不要用预检查进度打扰用户（"我不会去..."）。直接执行并继续。
 
-### 1. Context Availability Check
-- Run: `ls -la .claude/context/ 2>/dev/null`
-- If directory doesn't exist or is empty:
-  - Tell user: "❌ No context found. Please run /context:create first to establish project context."
-  - Exit gracefully
-- Count available context files: `ls -1 .claude/context/*.md 2>/dev/null | wc -l`
-- Report: "📁 Found {count} context files to load"
+### 1. 上下文可用性检查
+- 运行：`ls -la .claude/context/ 2>/dev/null`
+- 如果目录不存在或为空：
+  - 告知用户："❌ 未找到上下文。请先运行 /context:create 建立项目上下文。"
+  - 优雅退出
+- 计算可用上下文文件：`ls -1 .claude/context/*.md 2>/dev/null | wc -l`
+- 报告："📁 找到 {count} 个上下文文件要加载"
 
-### 2. File Integrity Check
-- For each context file found:
-  - Verify file is readable: `test -r ".claude/context/{file}" && echo "readable"`
-  - Check file has content: `test -s ".claude/context/{file}" && echo "has content"`
-  - Check for valid frontmatter (should start with `---`)
-- Report any issues:
-  - Empty files: "⚠️ {filename} is empty (skipping)"
-  - Unreadable files: "⚠️ Cannot read {filename} (permission issue)"
-  - Missing frontmatter: "⚠️ {filename} missing frontmatter (may be corrupted)"
+### 2. 文件完整性检查
+- 对于找到的每个上下文文件：
+  - 验证文件可读：`test -r ".claude/context/{file}" && echo "readable"`
+  - 检查文件有内容：`test -s ".claude/context/{file}" && echo "has content"`
+  - 检查有效的 frontmatter（应以 `---` 开头）
+- 报告任何问题：
+  - 空文件："⚠️ {filename} 为空（跳过）"
+  - 不可读文件："⚠️ 无法读取 {filename}（权限问题）"
+  - 缺失 frontmatter："⚠️ {filename} 缺失 frontmatter（可能已损坏）"
 
-### 3. Project State Check
-- Run: `git status --short 2>/dev/null` to see current state
-- Run: `git branch --show-current 2>/dev/null` to get current branch
-- Note if not in git repository (context may be less complete)
+### 3. 项目状态检查
+- 运行：`git status --short 2>/dev/null` 查看当前状态
+- 运行：`git branch --show-current 2>/dev/null` 获取当前分支
+- 注意如果不是 git 仓库（上下文可能不完整）
 
-## Instructions
+## 指令
 
-### 1. Context Loading Sequence
+### 1. 上下文加载顺序
 
-Load context files in priority order for optimal understanding:
+按优先级顺序加载上下文文件以获得最佳理解：
 
-**Priority 1 - Essential Context (load first):**
-1. `project-overview.md` - High-level understanding of the project
-2. `project-brief.md` - Core purpose and goals
-3. `tech-context.md` - Technical stack and dependencies
+**优先级 1 - 必要上下文（首先加载）：**
+1. `project-overview.md` - 项目的高级理解
+2. `project-brief.md` - 核心目的和目标
+3. `tech-context.md` - 技术栈和依赖项
 
-**Priority 2 - Current State (load second):**
-4. `progress.md` - Current status and recent work
-5. `project-structure.md` - Directory and file organization
+**优先级 2 - 当前状态（其次加载）：**
+4. `progress.md` - 当前状态和最近工作
+5. `project-structure.md` - 目录和文件组织
 
-**Priority 3 - Deep Context (load third):**
-6. `system-patterns.md` - Architecture and design patterns
-7. `product-context.md` - User needs and requirements
-8. `project-style-guide.md` - Coding conventions
-9. `project-vision.md` - Long-term direction
+**优先级 3 - 深度上下文（最后加载）：**
+6. `system-patterns.md` - 架构和设计模式
+7. `product-context.md` - 用户需求和需求
+8. `project-style-guide.md` - 编码约定
+9. `project-vision.md` - 长期方向
 
-### 2. Validation During Loading
+### 2. 加载期间验证
 
-For each file loaded:
-- Check frontmatter exists and parse:
-  - `created` date should be valid
-  - `last_updated` should be ≥ created date
-  - `version` should be present
-- If frontmatter is invalid, note but continue loading content
-- Track which files loaded successfully vs failed
+对于每个加载的文件：
+- 检查 frontmatter 存在并解析：
+  - `created` 日期应该有效
+  - `last_updated` 应该 ≥ created 日期
+  - `version` 应该存在
+- 如果 frontmatter 无效，记录但继续加载内容
+- 跟踪哪些文件成功加载与失败
 
-### 3. Supplementary Information
+### 3. 补充信息
 
-After loading context files:
-- Run: `git ls-files --others --exclude-standard | head -20` to see untracked files
-- Read `README.md` if it exists for additional project information
-- Check for `.env.example` or similar for environment setup needs
+加载上下文文件后：
+- 运行：`git ls-files --others --exclude-standard | head -20` 查看未跟踪文件
+- 如果存在则读取 `README.md` 获取额外项目信息
+- 检查 `.env.example` 或类似文件了解环境设置需求
 
-### 4. Error Recovery
+### 4. 错误恢复
 
-**If critical files are missing:**
-- `project-overview.md` missing: Try to understand from README.md
-- `tech-context.md` missing: Analyze package.json/requirements.txt directly
-- `progress.md` missing: Check recent git commits for status
+**如果关键文件缺失：**
+- `project-overview.md` 缺失：尝试从 README.md 理解
+- `tech-context.md` 缺失：直接分析 package.json/requirements.txt
+- `progress.md` 缺失：检查最近的 git 提交了解状态
 
-**If context is incomplete:**
-- Inform user which files are missing
-- Suggest running `/context:update` to refresh context
-- Continue with partial context but note limitations
+**如果上下文不完整：**
+- 告知用户哪些文件缺失
+- 建议运行 `/context:update` 刷新上下文
+- 使用部分上下文继续但注意限制
 
-### 5. Loading Summary
+### 5. 加载摘要
 
-Provide comprehensive summary after priming:
+加载完成后提供综合摘要：
 
 ```
-🧠 Context Primed Successfully
+🧠 上下文加载成功
 
-📖 Loaded Context Files:
-  ✅ Essential: {count}/3 files
-  ✅ Current State: {count}/2 files
-  ✅ Deep Context: {count}/4 files
+📖 已加载上下文文件：
+  ✅ 必要：{count}/3 个文件
+  ✅ 当前状态：{count}/2 个文件
+  ✅ 深度上下文：{count}/4 个文件
 
-🔍 Project Understanding:
-  - Name: {project_name}
-  - Type: {project_type}
-  - Language: {primary_language}
-  - Status: {current_status from progress.md}
-  - Branch: {git_branch}
+🔍 项目理解：
+  - 名称：{project_name}
+  - 类型：{project_type}
+  - 语言：{primary_language}
+  - 状态：{progress.md 中的当前状态}
+  - 分支：{git_branch}
 
-📊 Key Metrics:
-  - Last Updated: {most_recent_update}
-  - Context Version: {version}
-  - Files Loaded: {success_count}/{total_count}
+📊 关键指标：
+  - 最后更新：{most_recent_update}
+  - 上下文版本：{version}
+  - 已加载文件：{success_count}/{total_count}
 
-⚠️ Warnings:
-  {list any missing files or issues}
+⚠️ 警告：
+  {列出任何缺失文件或问题}
 
-🎯 Ready State:
-  ✅ Project context loaded
-  ✅ Current status understood
-  ✅ Ready for development work
+🎯 就绪状态：
+  ✅ 项目上下文已加载
+  ✅ 当前状态已理解
+  ✅ 准备开发工作
 
-💡 Project Summary:
-  {2-3 sentence summary of what the project is and current state}
+💡 项目摘要：
+  {2-3 句关于项目是什么和当前状态的摘要}
 ```
 
-### 6. Partial Context Handling
+### 6. 部分上下文处理
 
-If some files fail to load:
-- Continue with available context
-- Clearly note what's missing
-- Suggest remediation:
-  - "Missing technical context - run /context:create to rebuild"
-  - "Progress file corrupted - run /context:update to refresh"
+如果某些文件加载失败：
+- 使用可用上下文继续
+- 明确说明缺失的内容
+- 建议修复措施：
+  - "缺失技术上下文 - 运行 /context:create 重建"
+  - "进度文件损坏 - 运行 /context:update 刷新"
 
-### 7. Performance Optimization
+### 7. 性能优化
 
-For large contexts:
-- Load files in parallel when possible
-- Show progress indicator: "Loading context files... {current}/{total}"
-- Skip extremely large files (>10000 lines) with warning
-- Cache parsed frontmatter for faster subsequent loads
+对于大型上下文：
+- 尽可能并行加载文件
+- 显示进度指示器："正在加载上下文文件... {current}/{total}"
+- 跳过极大文件（>10000 行）并警告
+- 缓存解析的 frontmatter 以加快后续加载
 
-## Important Notes
+## 重要说明
 
-- **Always validate** files before attempting to read
-- **Load in priority order** to get essential context first
-- **Handle missing files gracefully** - don't fail completely
-- **Provide clear summary** of what was loaded and project state
-- **Note any issues** that might affect development work
+- **始终验证**文件后再尝试读取
+- **按优先级顺序加载**以首先获得必要上下文
+- **优雅处理缺失文件** - 不要完全失败
+- **提供清晰摘要**说明加载的内容和项目状态
+- **注意任何可能**影响开发工作的问题

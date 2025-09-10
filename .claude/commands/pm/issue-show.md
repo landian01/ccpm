@@ -2,32 +2,32 @@
 allowed-tools: Bash, Read, LS
 ---
 
-# Issue Show
+# 问题显示
 
-Display issue and sub-issues with detailed information.
+显示问题和子问题以及详细信息。
 
-## Usage
+## 用法
 ```
 /pm:issue-show <issue_number>
 ```
 
-## Instructions
+## 指令
 
-You are displaying comprehensive information about a GitHub issue and related sub-issues for: **Issue #$ARGUMENTS**
+您正在显示关于 GitHub 问题和相关子问题的综合信息：**问题 #$ARGUMENTS**
 
-### 1. Fetch Issue Data
-- Use `gh issue view #$ARGUMENTS` to get GitHub issue details
-- Look for local task file: first check `.claude/epics/*/$ARGUMENTS.md` (new naming)
-- If not found, search for file with `github:.*issues/$ARGUMENTS` in frontmatter (old naming)
-- Check for related issues and sub-tasks
+### 1. 获取问题数据
+- 使用 `gh issue view #$ARGUMENTS` 获取 GitHub 问题详情
+- 查找本地任务文件：首先检查 `.claude/epics/*/$ARGUMENTS.md`（新命名）
+- 如果未找到，在 frontmatter 中搜索包含 `github:.*issues/$ARGUMENTS` 的文件（旧命名）
+- 检查相关问题和子任务
 
-### 2. Issue Overview
-Display issue header:
+### 2. 问题概述
+显示问题标题：
 ```
-🎫 Issue #$ARGUMENTS: {Issue Title}
-   Status: {open/closed}
-   Labels: {labels}
-   Assignee: {assignee}
+🎫 问题 #$ARGUMENTS: {Issue Title}
+   状态: {open/closed}
+   标签: {labels}
+   分配给: {assignee}
    Created: {creation_date}
    Updated: {last_update}
    

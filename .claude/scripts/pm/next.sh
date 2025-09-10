@@ -1,13 +1,13 @@
 #!/bin/bash
-echo "Getting status..."
+echo "正在获取状态..."
 echo ""
 echo ""
 
-echo "📋 Next Available Tasks"
+echo "📋 下一个可用任务"
 echo "======================="
 echo ""
 
-# Find tasks that are open and have no dependencies or whose dependencies are closed
+# 查找开放且没有依赖关系或依赖关系已关闭的任务
 found=0
 
 for epic_dir in .claude/epics/*/; do
@@ -30,9 +30,9 @@ for epic_dir in .claude/epics/*/; do
       task_num=$(basename "$task_file" .md)
       parallel=$(grep "^parallel:" "$task_file" | head -1 | sed 's/^parallel: *//')
 
-      echo "✅ Ready: #$task_num - $task_name"
-      echo "   Epic: $epic_name"
-      [ "$parallel" = "true" ] && echo "   🔄 Can run in parallel"
+      echo "✅ 就绪: #$task_num - $task_name"
+      echo "   史诗: $epic_name"
+      [ "$parallel" = "true" ] && echo "   🔄 可以并行运行"
       echo ""
       ((found++))
     fi
@@ -40,14 +40,14 @@ for epic_dir in .claude/epics/*/; do
 done
 
 if [ $found -eq 0 ]; then
-  echo "No available tasks found."
+  echo "未找到可用任务。"
   echo ""
-  echo "💡 Suggestions:"
-  echo "  • Check blocked tasks: /pm:blocked"
-  echo "  • View all tasks: /pm:epic-list"
+  echo "💡 建议:"
+  echo "  • 检查阻塞任务: /pm:blocked"
+  echo "  • 查看所有任务: /pm:epic-list"
 fi
 
 echo ""
-echo "📊 Summary: $found tasks ready to start"
+echo "📊 摘要: $found 个任务已准备开始"
 
 exit 0

@@ -2,174 +2,174 @@
 allowed-tools: Bash, Read, Write, LS
 ---
 
-# PRD Parse
+# PRD 解析
 
-Convert PRD to technical implementation epic.
+将产品需求文档转换为技术实施史诗。
 
-## Usage
+## 用法
 ```
 /pm:prd-parse <feature_name>
 ```
 
-## Required Rules
+## 必需规则
 
-**IMPORTANT:** Before executing this command, read and follow:
-- `.claude/rules/datetime.md` - For getting real current date/time
+**重要**：执行此命令前，请阅读并遵循：
+- `.claude/rules/datetime.md` - 获取真实的当前日期/时间
 
-## Preflight Checklist
+## 飞行前检查清单
 
-Before proceeding, complete these validation steps.
-Do not bother the user with preflight checks progress ("I'm not going to ..."). Just do them and move on.
+在继续之前，完成这些验证步骤。
+不要用飞行前检查进度打扰用户（"我不会去..."）。直接执行并继续。
 
-### Validation Steps
-1. **Verify <feature_name> was provided as a parameter:**
-   - If not, tell user: "❌ <feature_name> was not provided as parameter. Please run: /pm:prd-parse <feature_name>"
-   - Stop execution if <feature_name> was not provided
+### 验证步骤
+1. **验证是否提供了 <feature_name> 参数：**
+   - 如果没有，告诉用户："❌ 未提供 <feature_name> 参数。请运行：/pm:prd-parse <feature_name>"
+   - 如果未提供 <feature_name> 则停止执行
 
-2. **Verify PRD exists:**
-   - Check if `.claude/prds/$ARGUMENTS.md` exists
-   - If not found, tell user: "❌ PRD not found: $ARGUMENTS. First create it with: /pm:prd-new $ARGUMENTS"
-   - Stop execution if PRD doesn't exist
+2. **验证 PRD 是否存在：**
+   - 检查 `.claude/prds/$ARGUMENTS.md` 是否存在
+   - 如果未找到，告诉用户："❌ 未找到 PRD：$ARGUMENTS。请先创建：/pm:prd-new $ARGUMENTS"
+   - 如果 PRD 不存在则停止执行
 
-3. **Validate PRD frontmatter:**
-   - Verify PRD has valid frontmatter with: name, description, status, created
-   - If frontmatter is invalid or missing, tell user: "❌ Invalid PRD frontmatter. Please check: .claude/prds/$ARGUMENTS.md"
-   - Show what's missing or invalid
+3. **验证 PRD 前置元数据：**
+   - 验证 PRD 具有有效的前置元数据：name、description、status、created
+   - 如果前置元数据无效或缺失，告诉用户："❌ PRD 前置元数据无效。请检查：.claude/prds/$ARGUMENTS.md"
+   - 显示缺失或无效的内容
 
-4. **Check for existing epic:**
-   - Check if `.claude/epics/$ARGUMENTS/epic.md` already exists
-   - If it exists, ask user: "⚠️ Epic '$ARGUMENTS' already exists. Overwrite? (yes/no)"
-   - Only proceed with explicit 'yes' confirmation
-   - If user says no, suggest: "View existing epic with: /pm:epic-show $ARGUMENTS"
+4. **检查现有史诗：**
+   - 检查 `.claude/epics/$ARGUMENTS/epic.md` 是否已存在
+   - 如果存在，询问用户："⚠️ 史诗 '$ARGUMENTS' 已存在。是否覆盖？（yes/no）"
+   - 只有在明确确认 'yes' 时才继续
+   - 如果用户说 no，建议："使用以下命令查看现有史诗：/pm:epic-show $ARGUMENTS"
 
-5. **Verify directory permissions:**
-   - Ensure `.claude/epics/` directory exists or can be created
-   - If cannot create, tell user: "❌ Cannot create epic directory. Please check permissions."
+5. **验证目录权限：**
+   - 确保 `.claude/epics/` 目录存在或可以创建
+   - 如果无法创建，告诉用户："❌ 无法创建史诗目录。请检查权限。"
 
-## Instructions
+## 指令
 
-You are a technical lead converting a Product Requirements Document into a detailed implementation epic for: **$ARGUMENTS**
+您是一名技术负责人，正在将产品需求文档转换为详细的技术实施史诗：**$ARGUMENTS**
 
-### 1. Read the PRD
-- Load the PRD from `.claude/prds/$ARGUMENTS.md`
-- Analyze all requirements and constraints
-- Understand the user stories and success criteria
-- Extract the PRD description from frontmatter
+### 1. 读取 PRD
+- 从 `.claude/prds/$ARGUMENTS.md` 加载 PRD
+- 分析所有需求和约束
+- 理解用户故事和成功标准
+- 从前置元数据中提取 PRD 描述
 
-### 2. Technical Analysis
-- Identify architectural decisions needed
-- Determine technology stack and approaches
-- Map functional requirements to technical components
-- Identify integration points and dependencies
+### 2. 技术分析
+- 识别需要的架构决策
+- 确定技术栈和方法
+- 将功能需求映射到技术组件
+- 识别集成点和依赖关系
 
-### 3. File Format with Frontmatter
-Create the epic file at: `.claude/epics/$ARGUMENTS/epic.md` with this exact structure:
+### 3. 带前置元数据的文件格式
+在以下位置创建史诗文件：`.claude/epics/$ARGUMENTS/epic.md`，使用此确切结构：
 
 ```markdown
 ---
 name: $ARGUMENTS
 status: backlog
-created: [Current ISO date/time]
+created: [当前 ISO 日期/时间]
 progress: 0%
 prd: .claude/prds/$ARGUMENTS.md
-github: [Will be updated when synced to GitHub]
+github: [同步到 GitHub 时将更新]
 ---
 
-# Epic: $ARGUMENTS
+# 史诗：$ARGUMENTS
 
-## Overview
-Brief technical summary of the implementation approach
+## 概述
+实施方法的技术简述
 
-## Architecture Decisions
-- Key technical decisions and rationale
-- Technology choices
-- Design patterns to use
+## 架构决策
+- 关键技术决策和理由
+- 技术选择
+- 使用的设计模式
 
-## Technical Approach
-### Frontend Components
-- UI components needed
-- State management approach
-- User interaction patterns
+## 技术方法
+### 前端组件
+- 需要的 UI 组件
+- 状态管理方法
+- 用户交互模式
 
-### Backend Services
-- API endpoints required
-- Data models and schema
-- Business logic components
+### 后端服务
+- 需要的 API 端点
+- 数据模型和架构
+- 业务逻辑组件
 
-### Infrastructure
-- Deployment considerations
-- Scaling requirements
-- Monitoring and observability
+### 基础设施
+- 部署考虑
+- 扩展要求
+- 监控和可观察性
 
-## Implementation Strategy
-- Development phases
-- Risk mitigation
-- Testing approach
+## 实施策略
+- 开发阶段
+- 风险缓解
+- 测试方法
 
-## Task Breakdown Preview
-High-level task categories that will be created:
-- [ ] Category 1: Description
-- [ ] Category 2: Description
-- [ ] etc.
+## 任务分解预览
+将创建的高级任务类别：
+- [ ] 类别 1：描述
+- [ ] 类别 2：描述
+- [ ] 等等。
 
-## Dependencies
-- External service dependencies
-- Internal team dependencies
-- Prerequisite work
+## 依赖关系
+- 外部服务依赖
+- 内部团队依赖
+- 先决条件工作
 
-## Success Criteria (Technical)
-- Performance benchmarks
-- Quality gates
-- Acceptance criteria
+## 成功标准（技术）
+- 性能基准
+- 质量标准
+- 验收标准
 
-## Estimated Effort
-- Overall timeline estimate
-- Resource requirements
-- Critical path items
+## 预估工作量
+- 整体时间估算
+- 资源需求
+- 关键路径项目
 ```
 
-### 4. Frontmatter Guidelines
-- **name**: Use the exact feature name (same as $ARGUMENTS)
-- **status**: Always start with "backlog" for new epics
-- **created**: Get REAL current datetime by running: `date -u +"%Y-%m-%dT%H:%M:%SZ"`
-- **progress**: Always start with "0%" for new epics
-- **prd**: Reference the source PRD file path
-- **github**: Leave placeholder text - will be updated during sync
+### 4. 前置元数据指南
+- **name**：使用确切的功能名称（与 $ARGUMENTS 相同）
+- **status**：新史诗始终以 "backlog" 开始
+- **created**：通过运行获取真实当前日期时间：`date -u +"%Y-%m-%dT%H:%M:%SZ"`
+- **progress**：新史诗始终以 "0%" 开始
+- **prd**：引用源 PRD 文件路径
+- **github**：留空占位符文本 - 同步期间将更新
 
-### 5. Output Location
-Create the directory structure if it doesn't exist:
-- `.claude/epics/$ARGUMENTS/` (directory)
-- `.claude/epics/$ARGUMENTS/epic.md` (epic file)
+### 5. 输出位置
+如果目录结构不存在则创建：
+- `.claude/epics/$ARGUMENTS/` （目录）
+- `.claude/epics/$ARGUMENTS/epic.md` （史诗文件）
 
-### 6. Quality Validation
+### 6. 质量验证
 
-Before saving the epic, verify:
-- [ ] All PRD requirements are addressed in the technical approach
-- [ ] Task breakdown categories cover all implementation areas
-- [ ] Dependencies are technically accurate
-- [ ] Effort estimates are realistic
-- [ ] Architecture decisions are justified
+保存史诗前，验证：
+- [ ] 所有 PRD 需求都在技术方法中得到解决
+- [ ] 任务分解类别涵盖所有实施领域
+- [ ] 依赖关系在技术上准确
+- [ ] 工作量估算现实
+- [ ] 架构决策有理有据
 
-### 7. Post-Creation
+### 7. 创建后
 
-After successfully creating the epic:
-1. Confirm: "✅ Epic created: .claude/epics/$ARGUMENTS/epic.md"
-2. Show summary of:
-   - Number of task categories identified
-   - Key architecture decisions
-   - Estimated effort
-3. Suggest next step: "Ready to break down into tasks? Run: /pm:epic-decompose $ARGUMENTS"
+成功创建史诗后：
+1. 确认："✅ 史诗已创建：.claude/epics/$ARGUMENTS/epic.md"
+2. 显示以下摘要：
+   - 识别的任务类别数量
+   - 关键架构决策
+   - 预估工作量
+3. 建议下一步："准备好分解为任务了吗？运行：/pm:epic-decompose $ARGUMENTS"
 
-## Error Recovery
+## 错误恢复
 
-If any step fails:
-- Clearly explain what went wrong
-- If PRD is incomplete, list specific missing sections
-- If technical approach is unclear, identify what needs clarification
-- Never create an epic with incomplete information
+如果任何步骤失败：
+- 清晰解释出了什么问题
+- 如果 PRD 不完整，列出具体缺失的部分
+- 如果技术方法不明确，识别需要澄清的内容
+- 永远不要创建信息不完整的史诗
 
-Focus on creating a technically sound implementation plan that addresses all PRD requirements while being practical and achievable for "$ARGUMENTS".
+专注于创建技术上合理的实施计划，解决所有 PRD 需求，同时对 "$ARGUMENTS" 保持实用和可实现。
 
-## IMPORTANT:
-- Aim for as few tasks as possible and limit the total number of tasks to 10 or less.
-- When creating the epic, identify ways to simplify and improve it. Look for ways to leverage existing functionality instead of creating more code when possible.
+## 重要：
+- 尽可能减少任务数量，将总任务数限制在 10 个或更少。
+- 创建史诗时，识别简化和改进的方法。尽可能寻找利用现有功能而不是创建更多代码的方法。

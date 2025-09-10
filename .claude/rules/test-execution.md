@@ -1,60 +1,60 @@
-# Test Execution Rule
+# 测试执行规则
 
-Standard patterns for running tests across all testing commands.
+所有测试命令中运行测试的标准模式。
 
-## Core Principles
+## 核心原则
 
-1. **Always use test-runner agent** from `.claude/agents/test-runner.md`
-2. **No mocking** - use real services for accurate results
-3. **Verbose output** - capture everything for debugging
-4. **Check test structure first** - before assuming code bugs
+1. **始终使用 test-runner 代理** 来自 `.claude/agents/test-runner.md`
+2. **不要模拟** - 使用真实服务获得准确结果
+3. **详细输出** - 捕获所有内容用于调试
+4. **首先检查测试结构** - 在假设代码错误之前
 
-## Execution Pattern
+## 执行模式
 
 ```markdown
-Execute tests for: {target}
+执行测试：{target}
 
-Requirements:
-- Run with verbose output
-- No mock services
-- Capture full stack traces
-- Analyze test structure if failures occur
+要求：
+- 以详细输出运行
+- 不要模拟服务
+- 捕获完整的堆栈跟踪
+- 如果发生失败，分析测试结构
 ```
 
-## Output Focus
+## 输出重点
 
-### Success
-Keep it simple:
+### 成功
+保持简单：
 ```
-✅ All tests passed ({count} tests in {time}s)
+✅ 所有测试通过（{count} 个测试，用时 {time} 秒）
 ```
 
-### Failure
-Focus on what failed:
+### 失败
+专注于失败的内容：
 ```
-❌ Test failures: {count}
+❌ 测试失败：{count}
 
 {test_name} - {file}:{line}
-  Error: {message}
-  Fix: {suggestion}
+  错误：{message}
+  修复：{suggestion}
 ```
 
-## Common Issues
+## 常见问题
 
-- Test not found → Check file path
-- Timeout → Kill process, report incomplete
-- Framework missing → Install dependencies
+- 测试未找到 → 检查文件路径
+- 超时 → 终止进程，报告未完成
+- 框架缺失 → 安装依赖项
 
-## Cleanup
+## 清理
 
-Always clean up after tests:
+测试后始终清理：
 ```bash
 pkill -f "jest|mocha|pytest" 2>/dev/null || true
 ```
 
-## Important Notes
+## 重要说明
 
-- Don't parallelize tests (avoid conflicts)
-- Let each test complete fully
-- Report failures with actionable fixes
-- Focus output on failures, not successes
+- 不要并行化测试（避免冲突）
+- 让每个测试完全完成
+- 报告失败并提供可操作的修复
+- 输出重点放在失败上，而不是成功上
