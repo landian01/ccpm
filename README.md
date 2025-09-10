@@ -385,9 +385,9 @@ GitHub 不需要知道工作是如何完成的——只知道它**已完成**。
    cp -r temp-ccpm/.claude ./
    rm -rf temp-ccpm
    
-   # 方式二：直接下载和解压 .claude 目录内容
-   ```
 
+   ```
+   # 方式二：直接下载和解压 .claude 目录内容
 
    ```
 
