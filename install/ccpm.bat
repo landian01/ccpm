@@ -1,6 +1,6 @@
 @echo off
 
-set REPO_URL=https://github.com/automazeio/ccpm.git
+set REPO_URL=https://github.com/landian01/ccpm.git
 set TARGET_DIR=.
 
 echo 正在从 %REPO_URL% 克隆仓库...

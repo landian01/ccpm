@@ -3,40 +3,40 @@
 ## Unix/Linux/macOS
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/automazeio/ccpm/main/ccpm.sh | bash
+curl -sSL https://raw.githubusercontent.com/landian01/ccpm/main/install/ccpm.sh | bash
 ```
 
 或者使用 wget：
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/automazeio/ccpm/main/ccpm.sh | bash
+wget -qO- https://raw.githubusercontent.com/landian01/ccpm/main/install/ccpm.sh | bash
 ```
 
 ## Windows (PowerShell)
 
 ```powershell
-iwr -useb https://raw.githubusercontent.com/automazeio/ccpm/main/ccpm.bat | iex
+iwr -useb https://raw.githubusercontent.com/landian01/ccpm/main/install/ccpm.bat | iex
 ```
 
 或者下载并执行：
 
 ```powershell
-curl -o ccpm.bat https://raw.githubusercontent.com/automazeio/ccpm/main/ccpm.bat && ccpm.bat
+curl -o ccpm.bat https://raw.githubusercontent.com/landian01/ccpm/main/install/ccpm.bat && ccpm.bat
 ```
 
 ## 单行命令替代方案
 
 ### Unix/Linux/macOS (直接命令)
 ```bash
-git clone https://github.com/automazeio/ccpm.git . && rm -rf .git
+git clone https://github.com/landian01/ccpm.git . && rm -rf .git install
 ```
 
 ### Windows (cmd)
 ```cmd
-git clone https://github.com/automazeio/ccpm.git . && rmdir /s /q .git
+git clone https://github.com/landian01/ccpm.git . && rmdir /s /q .git && rmdir /s /q install
 ```
 
 ### Windows (PowerShell)
 ```powershell
-git clone https://github.com/automazeio/ccpm.git .; Remove-Item -Recurse -Force .git
+git clone https://github.com/landian01/ccpm.git .; Remove-Item -Recurse -Force .git,install
 ```

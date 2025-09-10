@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REPO_URL="https://github.com/automazeio/ccpm.git"
+REPO_URL="https://github.com/landian01/ccpm.git"
 TARGET_DIR="."
 
 echo "正在从 $REPO_URL 克隆仓库..."
