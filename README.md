@@ -1,13 +1,9 @@
 # Claude Code PM
 
-[![Automaze](https://img.shields.io/badge/By-automaze.io-4b3baf)](https://automaze.io)
-&nbsp;
 [![Claude Code](https://img.shields.io/badge/+-Claude%20Code-d97757)](https://github.com/landian01/ccpm/blob/main/README.md)
 [![GitHub Issues](https://img.shields.io/badge/+-GitHub%20Issues-1f2328)](https://github.com/landian01/ccpm)
 &nbsp;
 [![MIT License](https://img.shields.io/badge/License-MIT-28a745)](https://github.com/landian01/ccpm/blob/main/LICENSE)
-&nbsp;
-[![Follow on 𝕏](https://img.shields.io/badge/𝕏-@aroussi-1c9bf0)](http://x.com/intent/follow?screen_name=aroussi)
 &nbsp;
 [![Star this repo](https://img.shields.io/badge/★-Star%20this%20repo-e7b10b)](https://github.com/landian01/ccpm)
 
@@ -382,25 +378,18 @@ GitHub 不需要知道工作是如何完成的——只知道它**已完成**。
 
 ### 快速设置 (2 分钟)
 
-1. **将此仓库安装到您的项目中**：
-
-   #### Unix/Linux/macOS
-
+1. **获取项目文件**：
    ```bash
-   cd path/to/your/project/
-   curl -sSL https://raw.githubusercontent.com/landian01/ccpm/main/install/ccpm.sh | bash
-   # 或者：wget -qO- https://raw.githubusercontent.com/landian01/ccpm/main/install/ccpm.sh | bash
+   # 方式一：克隆项目到临时目录，然后复制 .claude 目录
+   git clone https://github.com/landian01/ccpm.git temp-ccpm
+   cp -r temp-ccpm/.claude ./
+   rm -rf temp-ccpm
+   
+   # 方式二：直接下载和解压 .claude 目录内容
    ```
 
-   #### Windows (PowerShell)
-   ```bash
-   cd path/to/your/project/
-   iwr -useb https://raw.githubusercontent.com/landian01/ccpm/main/install/ccpm.bat | iex
+
    ```
-   > ⚠️ **重要**：如果您已经有 `.claude` 目录，请将此仓库克隆到不同目录，并将克隆的 `.claude` 目录内容复制到项目的 `.claude` 目录。
-
-   查看 [安装指南 ›](https://github.com/landian01/ccpm/tree/main/install) 中的完整/其他安装选项
-
 
 2. **初始化 PM 系统**：
    ```bash
@@ -465,27 +454,3 @@ GitHub 不需要知道工作是如何完成的——只知道它**已完成**。
 - Worktrees 为并行工作提供干净的 git 隔离
 - 可以单独添加 GitHub Projects 用于可视化
 
----
-
-## 支持此项目
-
-Claude Code PM 在 [Automaze](https://automaze.io) 开发，**为交付的开发者，由交付的开发者开发**。
-
-如果 Claude Code PM 帮助您的团队更好地交付软件：
-
-- ⭐ **[Star this repository](https://github.com/landian01/ccpm)** 以表示您的支持
-- 🐦 **[在 X 上关注 @aroussi](https://x.com/aroussi)** 获取更新和提示
-
-
-
----
-
-> [!TIP]
-> **与 Automaze 一起更快地交付。** 我们与创始人合作实现他们的愿景，扩展他们的业务，并优化成功。
-> **[访问 Automaze 预约与我的通话 ›](https://automaze.io)**
-
----
-
-## Star History
-
-![Star History Chart](https://api.star-history.com/svg?repos=landian01/ccpm)
