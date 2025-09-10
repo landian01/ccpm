@@ -380,16 +380,13 @@ GitHub 不需要知道工作是如何完成的——只知道它**已完成**。
 
 1. **获取项目文件**：
    ```bash
-   # 方式一：克隆项目到临时目录，然后复制 .claude 目录
+   # 克隆项目到临时目录，然后复制 .claude 目录
    git clone https://github.com/landian01/ccpm.git temp-ccpm
    cp -r temp-ccpm/.claude ./
    rm -rf temp-ccpm
    
-
    ```
-   # 方式二：直接下载和解压 .claude 目录内容
 
-   ```
 
 2. **初始化 PM 系统**：
    ```bash
