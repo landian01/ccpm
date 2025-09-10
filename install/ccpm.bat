@@ -1,4 +1,5 @@
 @echo off
+chcp 65001
 
 set REPO_URL=https://github.com/landian01/ccpm.git
 set TARGET_DIR=.
