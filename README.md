@@ -414,9 +414,9 @@ GitHub 不需要知道工作是如何完成的——只知道它**已完成**。
 
 5. **开始您的第一个功能**
 
-```bash
-/pm:prd-new your-feature-name
-```
+   ```bash
+   /pm:prd-new your-feature-name
+   ```
 
 观看结构化规划如何转换为已交付的代码。
 
